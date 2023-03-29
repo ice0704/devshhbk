@@ -1,1 +1,1 @@
-test
+test = "ich bin laurenz"
