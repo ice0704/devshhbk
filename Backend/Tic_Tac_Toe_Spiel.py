@@ -46,7 +46,7 @@ def drawx(xX1,xY1,xX2,xY2):
     pygame.draw.line(screen, (0, 0, 0), xX1, xY1, 10)
     pygame.draw.line(screen, (0, 0, 0), xX2, xY2, 10)
 
-def checkwinloosdraw():
+def checkwinlosedraw():
     for i in range(6):
         if board[i][0]==board[i][1] ==board[i][2]==board[i][3]==board[i][4]==board[i][5] != " ":
             print(f"{board[i][0]} hat gewonnen")
