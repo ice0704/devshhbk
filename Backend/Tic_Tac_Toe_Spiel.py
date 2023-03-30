@@ -34,11 +34,11 @@ def draw_window():
     pygame.display.update()
 
 def drawBoard():
-    for i in range(1, 6):
-        # Vertical lines
-        pygame.draw.line(screen, BLACK, (i * WIDTH / 6, 0), (i * WIDTH / 6, HEIGHT), 3)
-        # Horizontal lines
-        pygame.draw.line(screen, BLACK, (0, i * HEIGHT / 6), (WIDTH, i * HEIGHT / 6), 3)
+    for line in range(1, 6):
+        # Vertikale Linien
+        pygame.draw.line(screen, BLACK, (line * WIDTH / 6, 0), (line * WIDTH / 6, HEIGHT), 3)
+        # Horizontale Linien
+        pygame.draw.line(screen, BLACK, (0, line * HEIGHT / 6), (WIDTH, line * HEIGHT / 6), 3)
 
 
 
