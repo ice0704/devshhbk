@@ -104,7 +104,7 @@ while run:
                 horizontalfuenfundzwanziger = horizontalfuenfundzwanziger +100
                 horizontalfuenfziger = horizontalfuenfziger +100
                 horizontalfuenfundsiebziger = horizontalfuenfundsiebziger+100
-            if checkwinloosdraw() == True:
+            if checkwinlosedraw() == True:
                 run = False
             pygame.display.update()
 # Quit Pygame

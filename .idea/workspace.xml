@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="verschiebung code bauernschach">
+    <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="kommentare und umbenennung">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/Tic_Tac_Toe_Spiel.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/Tic_Tac_Toe_Spiel.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
