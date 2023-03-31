@@ -4,12 +4,24 @@ import sys
 pygame.init()
 
 
+
+# Setzt die Spielfelder mit Startpositionen
+board = [["b", "b", "b", "b", "b", "b"],
+         [" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
+         ["w", "w", "w", "w", "w", "w"]]
+
 class Pawn:
+    currentTurn = "white"
     def __init__(self, color, x, y):
         self.color = color
         self.x = x
         self.y = y
         self.has_moved = False  # added variable to track if pawn has moved
+        self.has_beaten = False # Variable die angibt ob geschlagen wurde
+
 
     def draw(self, surface, selected=False):
         radius = 30
@@ -25,17 +37,37 @@ class Pawn:
                 color = (0, 0, 0)
         pygame.draw.circle(surface, color, (self.x * 80 + 40, self.y * 80 + 40), radius)
 
-    def move(self, x, y, selected=False):
-        # move the piece if the destination is valid
-        if self.color == "white" and y == self.y - 1:
-            self.x = x
-            self.y = y
-            self.has_moved = True  # update has_moved after move
-        elif self.color == "black" and y == self.y + 1:
-            self.x = x
-            self.y = y
-            self.has_moved = True  # update has_moved after move
-        self.draw(board, selected=selected)  # draw the pawn with the selected flag
+#    def move(self, x, y, selected=False, currentTurn = currentTurn):
+#        # move the piece if the destination is valid
+#        if currentTurn == "white":
+#            if self.color == "white" and y == self.y - 1:
+#                self.x = x
+#                self.y = y
+#                self.has_moved = True  # update has_moved after move
+#                self.has_beaten = False
+#                currentTurn = "black"
+#            elif self.color == "white" and y == self.y - 1 and (
+#                    x == self.x + 1 or x == self.x - 1) and pawn.color == "black":
+#                self.x = x
+#                self.y = y
+#                self.has_moved = True
+#                self.has_beaten = True
+#                currentTurn = "black"
+#        if currentTurn == "black":
+#            if self.color == "black" and y == self.y + 1:
+#                self.x = x
+#                self.y = y
+#                self.has_moved = True  # update has_moved after move
+#                self.has_beaten = False
+#                currentTurn = "white"
+#            elif self.color == "black" and y == self.y - 1 and (
+#                    x == self.x + 1 or x == self.x - 1) and pawn.color == "white":
+#                self.x = x
+#                self.y = y
+#               self.has_moved = True
+#               self.has_beaten = True
+#                currentTurn = "black"
+#        self.draw(board, selected=selected)  # draw the pawn with the selected flag
 
 
 # render the board and pawns
@@ -77,6 +109,8 @@ for x in range(0, 6, 2):
         squares.append(rect1)
         squares.append(rect2)
 
+print(squares)
+
 for pawn in pawns:
     pawn.draw(board, selected=False)  # pass selected flag
     # add the board to the screen
@@ -88,6 +122,8 @@ print(squares)
 def chessGame():
     global selected_pawn
 
+    current_turn = "white"
+
     # the game
     while True:
         for event in pygame.event.get():
@@ -96,14 +132,14 @@ def chessGame():
                 sys.exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # get the position of the click
+                # Speichert die Position des Mouseklicks in der Variable pos
                 pos = pygame.mouse.get_pos()
 
-                # convert the position to board coordinates
+                # Konvertiert die Positionen in Boardkoordinaten
                 x = (pos[0] - 20) // 80
                 y = (pos[1] - 20) // 80
 
-                # check if a piece has been clicked
+                # Prüft, ob ein Bauer angeklickt wurde
                 for pawn in pawns:
                     if pawn.x == x and pawn.y == y:
                         selected_pawn = pawn
@@ -112,33 +148,36 @@ def chessGame():
                         break
 
             elif event.type == pygame.MOUSEBUTTONUP and selected_pawn is not None:
-                # get the position of the click
+                # Speichert die Position des Mouseklicks
                 pos = pygame.mouse.get_pos()
 
-                # convert the position to board coordinates
+                # Konvertiert die Positionen in Boardkoordinaten
                 x = (pos[0] - 20) // 80
                 y = (pos[1] - 20) // 80
 
-                # move the piece if the destination is valid
-                if selected_pawn.color == "white":
+                # Spielfigur bewegen, wenn der Spielzug gültig ist
+                if selected_pawn.color == "white" and selected_pawn.color == current_turn:
                     if selected_pawn.y == 5 and y == 3 and x == selected_pawn.x:
-                        # move 2 squares if pawn has never moved before
+                        # Möglichkeit beim ersten Spielzug zwei Felder zu bewegen
                         selected_pawn.x = x
                         selected_pawn.y = y
+                        current_turn = "black"
                     elif y == selected_pawn.y - 1 and x == selected_pawn.x:
-                        # move 1 square
+                        # Ein Spielfeld nach vorne bewegen
                         selected_pawn.x = x
                         selected_pawn.y = y
-
-                elif selected_pawn.color == "black":
+                        current_turn = "black"
+                elif selected_pawn.color == "black" and selected_pawn.color == current_turn:
                     if selected_pawn.y == 0 and y == 2 and x == selected_pawn.x:
-                        # move 2 squares if pawn has never moved before
+                        # Möglichkeit beim ersten Spielzug zwei Felder zu bewegen
                         selected_pawn.x = x
                         selected_pawn.y = y
+                        current_turn = "white"
                     elif y == selected_pawn.y + 1 and x == selected_pawn.x:
-                        # move 1 square
+                        # Ein Spielfeld nach vorne bewegen
                         selected_pawn.x = x
                         selected_pawn.y = y
+                        current_turn = "white"
                 reRender()
 
 
