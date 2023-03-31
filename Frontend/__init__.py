@@ -4,6 +4,7 @@ import sys
 pygame.init()
 
 
+
 class Pawn:
     def __init__(self, color, x, y):
         self.color = color
