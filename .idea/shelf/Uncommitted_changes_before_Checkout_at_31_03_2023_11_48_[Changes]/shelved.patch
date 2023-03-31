@@ -1,0 +1,47 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	
++++ b/.idea/workspace.xml	
+@@ -45,7 +45,28 @@
+       <recent name="C:\Users\recin\Documents\GitHub\devshhbk\Backend" />
+     </key>
+   </component>
+-  <component name="RunManager" selected="Python.Tic_Tac_Toe_Spiel">
++  <component name="RunManager" selected="Python.Bauernschach_Spiel">
++    <configuration name="Bauernschach_Spiel" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++      <module name="devshhbk" />
++      <option name="INTERPRETER_OPTIONS" value="" />
++      <option name="PARENT_ENVS" value="true" />
++      <envs>
++        <env name="PYTHONUNBUFFERED" value="1" />
++      </envs>
++      <option name="SDK_HOME" value="" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Backend" />
++      <option name="IS_MODULE_SDK" value="true" />
++      <option name="ADD_CONTENT_ROOTS" value="true" />
++      <option name="ADD_SOURCE_ROOTS" value="true" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Backend/Bauernschach_Spiel.py" />
++      <option name="PARAMETERS" value="" />
++      <option name="SHOW_COMMAND_LINE" value="false" />
++      <option name="EMULATE_TERMINAL" value="false" />
++      <option name="MODULE_MODE" value="false" />
++      <option name="REDIRECT_INPUT" value="false" />
++      <option name="INPUT_FILE" value="" />
++      <method v="2" />
++    </configuration>
+     <configuration name="Tic_Tac_Toe_Spiel" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+       <module name="devshhbk" />
+       <option name="INTERPRETER_OPTIONS" value="" />
+@@ -90,6 +111,8 @@
+     </configuration>
+     <recent_temporary>
+       <list>
++        <item itemvalue="Python.Bauernschach_Spiel" />
++        <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
+         <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
+       </list>
+     </recent_temporary>
