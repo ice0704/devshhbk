@@ -1,5 +1,5 @@
 import pygame
-
+from Tictactow_Algorytmus import Algorithmus
 # Initialisiere Pygame
 pygame.init()
 
@@ -46,35 +46,49 @@ def drawx(xX1,xY1,xX2,xY2):
     pygame.draw.line(screen, (0, 0, 0), xX1, xY1, 10)
     pygame.draw.line(screen, (0, 0, 0), xX2, xY2, 10)
 
-def checkwinloosdraw():
+def checkwinloosdraw(board):
     for i in range(6):
-        if board[i][0]==board[i][1] ==board[i][2]==board[i][3]==board[i][4]==board[i][5] != " ":
-            print(f"{board[i][0]} hat gewonnen")
-            return True
-        if board[0][i]==board[1][i] ==board[2][i]==board[3][i]==board[4][i]==board[5][i] != " ":
-            print(f"{board[0][i]} hat gewonnen")
-            return True
-        if board[0][0]==board[1][1] ==board[2][2]==board[3][3]==board[4][4]==board[5][5] != " ":
-            print(f"{board[0][0]} hat gewonnen")
-            return True
-        if board[0][5]==board[1][4] ==board[2][3]==board[3][2]==board[4][1]==board[5][0] != " ":
+        for y in range(3):
+            if board[i][y]==board[i][y+1] ==board[i][y+2]==board[i][y+3] != " ":
+                print(f"{board[i][2]} hat gewonnen")
+                return board[i][2]
+
+            if board[y][i]==board[y+1][i] ==board[y+2][i]==board[y+3][i] != " ":
+                print(f"{board[2][i]} hat gewonnen")
+                return board[2][i]
+
+            if board[y][y] == board[y+1][y+1] == board[y+2][y+2] == board[y+3][y+3] != " ":
+                print(f"{board[3][3]} hat gewonnen")
+                return board[3][3]
+
+        if board[y][y-5]==board[y+1][4-y] ==board[y+2][3-y]==board[y+3][2-y]  != " ":
             print(f"{board[0][5]} hat gewonnen")
-            return True
+            return board[0][5]
 
 #boolean wer wer an der rheie ist true ist X und flase ist O
 spieler = False
 draw_window()
 # Game loop
 run = True
+gamevorbei = False
 
 while run:
     for event in pygame.event.get():
         #Event zum Schließen vom fenster
         if event.type == pygame.QUIT:
             run = False
+        #if spieler == True:
+        #    XYALGO = Algorithmus(board)
+        #    print(XYALGO)
+        #    drawcircle(XYALGO[0],XYALGO[1])
+        #    spieler = False
+        #    pygame.display.update()
+
+        #if spieler == False:
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
             #Prüfen ob der mouse klick sich im feld befindet und ob das board an der stelle noch leer ist dann den spieler rein zeichenen
+            ## die horizontalen und vertikalen dinger sind die pixel welche mit den schleifen immer um 100 (einfeld) erhöht werden
             horizontalhunderter = 0
             horizontalfuenfundzwanziger = 25
             horizontalfuenfziger = 50
@@ -87,7 +101,7 @@ while run:
                 diagonalfuenfundsiebziger = 75
                 #diese schleife geht die diagonalen rheien durch
                 for i in range(6):
-                    if pos[0] >= diagonalhunderter and pos[0] <= diagonalhunderter+100 and pos[1] >= horizontalhunderter and pos[1] <= horizontalhunderter+100 and board[t][i] == " ":
+                    if pos[0] >= diagonalhunderter and pos[0] <= diagonalhunderter+100 and pos[1] >= horizontalhunderter and pos[1] <= horizontalhunderter+100 and board[t][i] == " " and gamevorbei == False:
                         if spieler == True:
                             drawcircle(diagonalfuenfziger, horizontalfuenfziger)
                             board[t][i] = "O"
@@ -104,8 +118,12 @@ while run:
                 horizontalfuenfundzwanziger = horizontalfuenfundzwanziger +100
                 horizontalfuenfziger = horizontalfuenfziger +100
                 horizontalfuenfundsiebziger = horizontalfuenfundsiebziger+100
-            if checkwinloosdraw() == True:
-                run = False
-            pygame.display.update()
+
+                #checken ob jemand gewonnen hat und dann das spiel deaktivieren aber nicht schließen
+                if gamevorbei == False:
+                    if checkwinloosdraw(board) == "X" or checkwinloosdraw(board) == "O":
+                        gamevorbei = True
+
+                pygame.display.update()
 # Quit Pygame
 pygame.quit()
