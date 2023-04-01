@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="Schachfiguren abwechselnd bewegen">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_31_03_2023_11_47__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_31_03_2023_11_47__Changes_.xml" afterDir="false" />
+    <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="bauern können schlagen, aber nur per drag n drop">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/Bauernschach_Spiel.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/Bauernschach_Spiel.py" afterDir="false" />
     </list>
@@ -47,7 +46,28 @@
       <recent name="C:\Users\recin\Documents\GitHub\devshhbk\Backend" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.__init__">
+  <component name="RunManager" selected="Python.Bauernschach_Spiel">
+    <configuration name="Bauernschach_Spiel" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="devshhbk" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Backend" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Backend/Bauernschach_Spiel.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Tic_Tac_Toe_Spiel" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="devshhbk" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -113,8 +133,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.__init__" />
+        <item itemvalue="Python.Bauernschach_Spiel" />
         <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
+        <item itemvalue="Python.__init__" />
         <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
       </list>
     </recent_temporary>
@@ -142,7 +163,28 @@
       <option name="project" value="LOCAL" />
       <updated>1680169719176</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="unnötige move Funktion">
+      <created>1680349124185</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1680349124185</updated>
+    </task>
+    <task id="LOCAL-00004" summary="workspace">
+      <created>1680349188399</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1680349188399</updated>
+    </task>
+    <task id="LOCAL-00005" summary="bauern können schlagen, aber nur per drag n drop">
+      <created>1680353149110</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1680353149110</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -159,6 +201,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="keine ahnung" />
     <MESSAGE value="verschiebung code bauernschach" />
-    <option name="LAST_COMMIT_MESSAGE" value="verschiebung code bauernschach" />
+    <MESSAGE value="unnötige move Funktion" />
+    <MESSAGE value="workspace" />
+    <MESSAGE value="bauern können schlagen, aber nur per drag n drop" />
+    <option name="LAST_COMMIT_MESSAGE" value="bauern können schlagen, aber nur per drag n drop" />
   </component>
 </project>

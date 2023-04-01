@@ -136,14 +136,14 @@ def chessGame():
                 # Konvertiert die Positionen in Boardkoordinaten
                 x = (pos[0] - 20) // 80
                 y = (pos[1] - 20) // 80
+                if selected_pawn is None or (selected_pawn is not None and selected_pawn.color is not current_turn):
+                    # Prüft, ob ein Bauer angeklickt wurde
+                    for pawn in pawns:
+                        if pawn.x == x and pawn.y == y:
+                            selected_pawn = pawn
 
-                # Prüft, ob ein Bauer angeklickt wurde
-                for pawn in pawns:
-                    if pawn.x == x and pawn.y == y:
-                        selected_pawn = pawn
-
-                        print(pawn)
-                        break
+                            print(pawn)
+                            break
             elif event.type == pygame.MOUSEBUTTONUP and selected_pawn is not None and selected_pawn.color is current_turn:
                 # Speichert die Position des Mouseklicks
                 pos = pygame.mouse.get_pos()
