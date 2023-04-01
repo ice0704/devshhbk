@@ -37,39 +37,6 @@ class Pawn:
                 color = (0, 0, 0)
         pygame.draw.circle(surface, color, (self.x * 80 + 40, self.y * 80 + 40), radius)
 
-#    def move(self, x, y, selected=False, currentTurn = currentTurn):
-#        # move the piece if the destination is valid
-#        if currentTurn == "white":
-#            if self.color == "white" and y == self.y - 1:
-#                self.x = x
-#                self.y = y
-#                self.has_moved = True  # update has_moved after move
-#                self.has_beaten = False
-#                currentTurn = "black"
-#            elif self.color == "white" and y == self.y - 1 and (
-#                    x == self.x + 1 or x == self.x - 1) and pawn.color == "black":
-#                self.x = x
-#                self.y = y
-#                self.has_moved = True
-#                self.has_beaten = True
-#                currentTurn = "black"
-#        if currentTurn == "black":
-#            if self.color == "black" and y == self.y + 1:
-#                self.x = x
-#                self.y = y
-#                self.has_moved = True  # update has_moved after move
-#                self.has_beaten = False
-#                currentTurn = "white"
-#            elif self.color == "black" and y == self.y - 1 and (
-#                    x == self.x + 1 or x == self.x - 1) and pawn.color == "white":
-#                self.x = x
-#                self.y = y
-#               self.has_moved = True
-#               self.has_beaten = True
-#                currentTurn = "black"
-#        self.draw(board, selected=selected)  # draw the pawn with the selected flag
-
-
 # render the board and pawns
 def reRender():
     board.fill((255, 206, 158))
