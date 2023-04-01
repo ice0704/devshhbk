@@ -12,14 +12,15 @@ board = [["b", "b", "b", "b", "b", "b"],
          ["w", "w", "w", "w", "w", "w"]]
 
 class Pawn:
+
     currentTurn = "white"
+
     def __init__(self, color, x, y):
         self.color = color
         self.x = x
         self.y = y
         self.has_moved = False  # added variable to track if pawn has moved
-        self.has_beaten = False # Variable die angibt ob geschlagen wurde
-
+        self.has_beaten = False  # Variable die angibt, ob geschlagen wurde
 
     def draw(self, surface, selected=False):
         radius = 30
@@ -35,41 +36,9 @@ class Pawn:
                 color = (0, 0, 0)
         pygame.draw.circle(surface, color, (self.x * 80 + 40, self.y * 80 + 40), radius)
 
-#    def move(self, x, y, selected=False, currentTurn = currentTurn):
-#        # move the piece if the destination is valid
-#        if currentTurn == "white":
-#            if self.color == "white" and y == self.y - 1:
-#                self.x = x
-#                self.y = y
-#                self.has_moved = True  # update has_moved after move
-#                self.has_beaten = False
-#                currentTurn = "black"
-#            elif self.color == "white" and y == self.y - 1 and (
-#                    x == self.x + 1 or x == self.x - 1) and pawn.color == "black":
-#                self.x = x
-#                self.y = y
-#                self.has_moved = True
-#                self.has_beaten = True
-#                currentTurn = "black"
-#        if currentTurn == "black":
-#            if self.color == "black" and y == self.y + 1:
-#                self.x = x
-#                self.y = y
-#                self.has_moved = True  # update has_moved after move
-#                self.has_beaten = False
-#                currentTurn = "white"
-#            elif self.color == "black" and y == self.y - 1 and (
-#                    x == self.x + 1 or x == self.x - 1) and pawn.color == "white":
-#                self.x = x
-#                self.y = y
-#               self.has_moved = True
-#               self.has_beaten = True
-#                currentTurn = "black"
-#        self.draw(board, selected=selected)  # draw the pawn with the selected flag
-
-
 # render the board and pawns
 def reRender():
+
     board.fill((255, 206, 158))
     for x in range(0, 6, 2):
         for y in range(0, 6, 2):
@@ -116,19 +85,18 @@ screen.blit(board, (20, 20))
 pygame.display.flip()
 print(squares)
 
-
 def chessGame():
     global selected_pawn, beaten_pawn, pawn_to_beat
 
     current_turn = "white"
+    run = True
 
     # the game
-    while True:
+    while run is True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Speichert die Position des Mouseklicks in der Variable pos
                 pos = pygame.mouse.get_pos()
@@ -201,7 +169,11 @@ def chessGame():
                         selected_pawn.y = y
                         current_turn = "white"
                         pawns.remove(pawn_to_beat)
+                if selected_pawn.color == "white" and selected_pawn.y == 0:
+                    run = False
+                    print("Weiß hat gewonnen")
+                elif selected_pawn.color == "black" and selected_pawn.y == 5:
+                    run = False
+                    print("Schwarz hat gewonnen")
                 reRender()
-
-
 chessGame()
