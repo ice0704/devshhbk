@@ -149,7 +149,7 @@ def chessGame():
                             print(pawn)
                             break
 
-                if selected_pawn is not None and last_pos is not None:
+
                     # Prüft, ob ein Bauer angeklickt wurde
                     for pawn in pawns:
                         if pawn.x == x and pawn.y == y:
@@ -157,7 +157,7 @@ def chessGame():
 
                             print(pawn)
                             break
-                last_pos = pos
+                    last_pos = pos
             elif event.type == pygame.MOUSEBUTTONUP and selected_pawn is not None and selected_pawn.color is \
                     current_turn:
                 # Speichert die Position des Mouseklicks
