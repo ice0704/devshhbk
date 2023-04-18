@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="rechtschreibkorrektur">
+    <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="Login Seite">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DB/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/DB/__init__.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -158,6 +157,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="keine ahnung" />
     <MESSAGE value="verschiebung code bauernschach" />
-    <option name="LAST_COMMIT_MESSAGE" value="verschiebung code bauernschach" />
+    <MESSAGE value="Login Seite" />
+    <option name="LAST_COMMIT_MESSAGE" value="Login Seite" />
   </component>
 </project>
