@@ -18,6 +18,7 @@ board = [[" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "]]
 
 
@@ -46,24 +47,29 @@ def drawx(xX1,xY1,xX2,xY2):
     pygame.draw.line(screen, (0, 0, 0), xX1, xY1, 10)
     pygame.draw.line(screen, (0, 0, 0), xX2, xY2, 10)
 
-def checkwinloosdraw(board):
+def checkwinloosdraw():
     for i in range(6):
-        for y in range(3):
-            if board[i][y]==board[i][y+1] ==board[i][y+2]==board[i][y+3] != " ":
-                print(f"{board[i][2]} hat gewonnen")
-                return board[i][2]
+        for q in range(2):
+            if board[i][0+q] == board[i][1+q] == board[i][2+q] == board [i][3+q] != " ":
+                print (f" {board[i][0+q]} hat gewonnen")
 
-            if board[y][i]==board[y+1][i] ==board[y+2][i]==board[y+3][i] != " ":
-                print(f"{board[2][i]} hat gewonnen")
-                return board[2][i]
+                return board[i][0+q]
+            if board[0+q][i] == board[1+q][i] == board[2+q][i] == board[3+q][i] != " ":
+                print (f" {board [0+q] [i]} hat gewonnen")
+                return board [0+q] [i]
+    oliure = (0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1),(2,2)
+    for pos in oliure:
+        if board[pos[0]][pos[1]] == board [pos[0]+1] [pos [1]+1] == board [pos[0]+2] [pos[1]+2] == board [pos[0]+3] [pos[1]+3] != " ":
+            print(f" {board [pos[0]] [pos [1]]} hat gewonnen")
+            return board [pos[0]] [pos [1]]
+    oreuli = (0,3),(1,3),(2,3),(0,4),(1,4),(2,4),(0,5),(1,5),(2,5)
+    for pos in oreuli:
+        if board [pos[0]][pos[1]] == board [pos[0]+1] [pos[1]-1] == board [pos[0]+2] [pos[1]-2] == board [pos[0]+3] [pos [1]-3] != " ":
+            print (f" {board [pos[0]] [pos[1]]} hat gewonnen")
+            return board [pos[0]] [pos[1]]
 
-            if board[y][y] == board[y+1][y+1] == board[y+2][y+2] == board[y+3][y+3] != " ":
-                print(f"{board[3][3]} hat gewonnen")
-                return board[3][3]
 
-        if board[y][y-5]==board[y+1][4-y] ==board[y+2][3-y]==board[y+3][2-y]  != " ":
-            print(f"{board[0][5]} hat gewonnen")
-            return board[0][5]
+
 
 #boolean wer wer an der rheie ist true ist X und flase ist O
 spieler = False
@@ -121,7 +127,7 @@ while run:
 
                 #checken ob jemand gewonnen hat und dann das spiel deaktivieren aber nicht schließen
                 if gamevorbei == False:
-                    if checkwinloosdraw(board) == "X" or checkwinloosdraw(board) == "O":
+                    if checkwinloosdraw() == "X" or checkwinloosdraw() == "O":
                         gamevorbei = True
 
                 pygame.display.update()

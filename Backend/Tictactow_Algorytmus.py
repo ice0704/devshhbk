@@ -1,18 +1,23 @@
 
 def checkwinloosdraw(board):
     for i in range(6):
-        if board[i][0]==board[i][1] ==board[i][2]==board[i][3]==board[i][4]==board[i][5] != " ":
+        for q in range(2):
+            if board[i][0 + q] == board[i][1 + q] == board[i][2 + q] == board[i][3 + q] != " "
+                return board[i][0 + q]
 
-            return board[i][0]
-        if board[0][i]==board[1][i] ==board[2][i]==board[3][i]==board[4][i]==board[5][i] != " ":
+            if board[0 + q][i] == board[1 + q][i] == board[2 + q][i] == board[3 + q][i] != " ":
+                return board[0 + q][i]
 
-            return board[0][i]
-        if board[0][0]==board[1][1] ==board[2][2]==board[3][3]==board[4][4]==board[5][5] != " ":
+    oliure = (0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)
+    for pos in oliure:
+        if board[pos[0]][pos[1]] == board[pos[0] + 1][pos[1] + 1] == board[pos[0] + 2][pos[1] + 2] == board[pos[0] + 3][pos[1] + 3] != " ":
+            return board[pos[0]][pos[1]]
 
-            return board[0][0]
-        if board[0][5]==board[1][4] ==board[2][3]==board[3][2]==board[4][1]==board[5][0] != " ":
+    oreuli = (0, 3), (1, 3), (2, 3), (0, 4), (1, 4), (2, 4), (0, 5), (1, 5), (2, 5)
+    for pos in oreuli:
+        if board[pos[0]][pos[1]] == board[pos[0] + 1][pos[1] - 1] == board[pos[0] + 2][pos[1] - 2] == board[pos[0] + 3][pos[1] - 3] != " ":
+            return board[pos[0]][pos[1]]
 
-            return board[0][5]
 
 
 def Algorithmus(board):
