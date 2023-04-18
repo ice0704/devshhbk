@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="algorithmus basis">
+    <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="unversioned">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_18_04_2023_13_51__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_18_04_2023_13_51__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Backend/Bauernschach_Spiel.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/Bauernschach_Spiel.py" afterDir="false" />
     </list>

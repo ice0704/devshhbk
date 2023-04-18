@@ -120,11 +120,13 @@ def minimax(position, depth, alpha, beta, maximizing_player):
         return min_eval
 
 def chessGame():
-    global selected_pawn, beaten_pawn, pawn_to_beat, last_pos
+    global selected_pawn
 
     current_turn = "white"
     run = True
-    last_pos = None
+    beaten_pawn = False
+    pawn_to_beat = False
+    value = 0
 
     # the game
     while run is True:
@@ -140,24 +142,13 @@ def chessGame():
                 x = (pos[0] - 20) // 80
                 y = (pos[1] - 20) // 80
 
-                if selected_pawn is None or (selected_pawn is not None and selected_pawn.color is not current_turn):
-                    # Prüft, ob ein Bauer angeklickt wurde
-                    for pawn in pawns:
-                        if pawn.x == x and pawn.y == y:
-                            selected_pawn = pawn
+                # Prüft, ob ein Bauer angeklickt wurde
+                for pawn in pawns:
+                   if pawn.x == x and pawn.y == y:
+                        selected_pawn = pawn
+                        print(pawn)
+                        break
 
-                            print(pawn)
-                            break
-
-
-                    # Prüft, ob ein Bauer angeklickt wurde
-                    for pawn in pawns:
-                        if pawn.x == x and pawn.y == y:
-                            selected_pawn = pawn
-
-                            print(pawn)
-                            break
-                    last_pos = pos
             elif event.type == pygame.MOUSEBUTTONUP and selected_pawn is not None and selected_pawn.color is \
                     current_turn:
                 # Speichert die Position des Mouseklicks
@@ -181,47 +172,123 @@ def chessGame():
                         selected_pawn.x = x
                         selected_pawn.y = y
                         current_turn = "black"
+
+                        # Wenn am Anfang direkt zwei Felder gegangen werden, gibts eine höhere Value
+                        if x < 2 or x > 4:
+                            # Die äußeren zwei Felder kriegen jeweils 1 Value
+                            # und für das direkte Bewegen über zwei Felder gibts 1 Value als Bonus
+                            value += 3
+                        else:
+                            # Hier gilt dasselbe für die inneren zwei Felder mit einem Bonus von 2
+                            value += 4
+
                     elif y == selected_pawn.y - 1 and x == selected_pawn.x and beaten_pawn is False:
                         # Ein Spielfeld nach vorne bewegen
                         selected_pawn.x = x
                         selected_pawn.y = y
                         current_turn = "black"
+                        if y < 3:
+                            # Über der Spielfeldhälfte
+                            if x < 2 or x > 4:
+                                # äußere Spielfelder
+                                value += 2
+                            else:
+                                # innere Spielfelder
+                                value += 3
+                        else:
+                            # Vor der Spielfeldhälfte
+                            if x < 2 or x > 4:
+                                # äußere Spielfelder
+                                value += 1
+                            else:
+                                # innere Spielfelder
+                                value += 2
+
                     elif y == selected_pawn.y - 1 and x == selected_pawn.x - 1 and beaten_pawn is True:
                         selected_pawn.x = x
                         selected_pawn.y = y
                         current_turn = "black"
                         pawns.remove(pawn_to_beat)
+                        if y < 3:
+                            # Über der Spielfeldhälfte schlagen
+                            value += 6
+                        else:
+                            # Unter der Spielfeldhälfte schlagen
+                            value += 5
                     elif y == selected_pawn.y - 1 and x == selected_pawn.x + 1 and beaten_pawn is True:
                         selected_pawn.x = x
                         selected_pawn.y = y
                         current_turn = "black"
                         pawns.remove(pawn_to_beat)
+                        if y < 3:
+                            # Über der Spielfeldhälfte schlagen
+                            value += 6
+                        else:
+                            # Unter der Spielfeldhälfte schlagen
+                            value += 5
                 elif selected_pawn.color == "black" and selected_pawn.color == current_turn:
                     if selected_pawn.y == 0 and y == 2 and x == selected_pawn.x and beaten_pawn is False:
                         # Möglichkeit beim ersten Spielzug zwei Felder zu bewegen
                         selected_pawn.x = x
                         selected_pawn.y = y
                         current_turn = "white"
+                        # Wenn am Anfang direkt zwei Felder gegangen werden, gibts eine höhere Value
+                        if x < 2 or x > 4:
+                            # Die äußeren zwei Felder kriegen jeweils 1 Value
+                            # und für das direkte Bewegen über zwei Felder gibts 1 Value als Bonus
+                            value -= 3
+                        else:
+                            # Hier gilt dasselbe für die inneren zwei Felder mit einem Bonus von 2
+                            value -= 4
                     elif y == selected_pawn.y + 1 and x == selected_pawn.x and beaten_pawn is False:
                         # Ein Spielfeld nach vorne bewegen
                         selected_pawn.x = x
                         selected_pawn.y = y
                         current_turn = "white"
+                        if y < 3:
+                            # Über der Spielfeldhälfte
+                            if x < 2 or x > 4:
+                                # äußere Spielfelder
+                                value += 2
+                            else:
+                                # innere Spielfelder
+                                value += 3
+                        else:
+                            # Vor der Spielfeldhälfte
+                            if x < 2 or x > 4:
+                                # äußere Spielfelder
+                                value += 1
+                            else:
+                                # innere Spielfelder
+                                value += 2
                     elif y == selected_pawn.y + 1 and x == selected_pawn.x - 1 and beaten_pawn is True:
                         selected_pawn.x = x
                         selected_pawn.y = y
                         current_turn = "white"
                         pawns.remove(pawn_to_beat)
+                        if y > 3:
+                            # Über der Spielfeldhälfte schlagen
+                            value -= 6
+                        else:
+                            # Unter der Spielfeldhälfte schlagen
+                            value -= 5
                     elif y == selected_pawn.y + 1 and x == selected_pawn.x + 1 and beaten_pawn is True:
                         selected_pawn.x = x
                         selected_pawn.y = y
                         current_turn = "white"
                         pawns.remove(pawn_to_beat)
+                        if y > 3:
+                            # Über der Spielfeldhälfte schlagen
+                            value -= 6
+                        else:
+                            # Unter der Spielfeldhälfte schlagen
+                            value -= 5
                 if selected_pawn.color == "white" and selected_pawn.y == 0:
                     run = False
                     print("Weiß hat gewonnen")
                 elif selected_pawn.color == "black" and selected_pawn.y == 5:
                     run = False
                     print("Schwarz hat gewonnen")
+                print(value)
                 reRender()
 chessGame()
