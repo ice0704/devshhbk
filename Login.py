@@ -24,6 +24,10 @@ dropdown_active = False
 login_button_rect = pygame.Rect(500, 100, 300, 40)
 login_button_text = font.render("Login", True, pygame.Color("white"))
 
+# Neuer-Benutzer-Button definieren
+add_button_rect = pygame.Rect(50, 200, 330, 40)
+add_button_text = font.render("Neuen Benutzer hinzufügen", True, pygame.Color("white"))
+
 # Haupt-Loop
 done = False
 while not done:
@@ -53,6 +57,15 @@ while not done:
                     print(f"Logged in as {selected_item}")
                     # Hier könnten Sie weitere Aktionen ausführen, z.B. eine neue Seite öffnen oder das Programm beenden.
 
+            # Wenn auf den Neuer-Benutzer-Button geklickt wird, füge einen neuen Benutzer zur Benutzerliste hinzu
+            elif add_button_rect.collidepoint(event.pos):
+                new_user_name = input("Bitte geben Sie den neuen Benutzernamen ein:")
+                if new_user_name != "":
+                    users.append(new_user_name)
+                    dropdown_items = list(users)
+                    selected_item = new_user_name
+                    print(f"Benutzer {new_user_name} wurde hinzugefügt.")
+
     # Benutzeroberfläche zeichnen
 
     # Hintergrund schwarz füllen
@@ -60,6 +73,10 @@ while not done:
 
     # Dropdown-Menü als weißes Rechteck zeichnen
     pygame.draw.rect(screen, pygame.Color("white"), dropdown_rect, 2)
+
+
+
+
 
     # Text für den ausgewählten Benutzernamen rendern und auf das Dropdown-Menü zeichnen
     dropdown_text = font.render(selected_item if selected_item is not None else "Benutzernamen auswählen...", True, pygame.Color("white"))
@@ -76,6 +93,10 @@ while not done:
     # Login-Button als weißes Rechteck zeichnen und Text rendern
     pygame.draw.rect(screen, pygame.Color("white"), login_button_rect, 2)
     screen.blit(login_button_text, (login_button_rect.x + 5, login_button_rect.y + 5))
+
+    # Benutzer hinzufügen, Text rendern
+    pygame.draw.rect(screen, pygame.Color("green"), add_button_rect, 2)
+    screen.blit(add_button_text, (add_button_rect.x + 5, add_button_rect.y + 5))
 
     # Pygame-Fenster aktualisieren
     pygame.display.flip()
