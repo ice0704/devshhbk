@@ -45,7 +45,7 @@
       <recent name="C:\Users\recin\Documents\GitHub\devshhbk\Backend" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.__init__">
+  <component name="RunManager" selected="Python.main">
     <configuration name="Tic_Tac_Toe_Spiel" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="devshhbk" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -147,7 +147,14 @@
       <option name="project" value="LOCAL" />
       <updated>1681813905753</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Login Seite">
+      <created>1681815599165</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1681815599165</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
