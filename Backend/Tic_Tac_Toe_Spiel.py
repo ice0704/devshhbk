@@ -1,5 +1,5 @@
 import pygame
-
+from Tictactow_Algorytmus import Algorithmus
 # Initialisiere Pygame
 pygame.init()
 
@@ -14,6 +14,7 @@ WHITE = (255, 255, 255)
 
 # Setzt die Spielfelder
 board = [[" ", " ", " ", " ", " ", " "],
+         [" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "],
          [" ", " ", " ", " ", " ", " "],
@@ -46,35 +47,54 @@ def drawx(xX1,xY1,xX2,xY2):
     pygame.draw.line(screen, (0, 0, 0), xX1, xY1, 10)
     pygame.draw.line(screen, (0, 0, 0), xX2, xY2, 10)
 
-def checkwinlosedraw():
+def checkwinloosdraw():
     for i in range(6):
-        if board[i][0]==board[i][1] ==board[i][2]==board[i][3]==board[i][4]==board[i][5] != " ":
-            print(f"{board[i][0]} hat gewonnen")
-            return True
-        if board[0][i]==board[1][i] ==board[2][i]==board[3][i]==board[4][i]==board[5][i] != " ":
-            print(f"{board[0][i]} hat gewonnen")
-            return True
-        if board[0][0]==board[1][1] ==board[2][2]==board[3][3]==board[4][4]==board[5][5] != " ":
-            print(f"{board[0][0]} hat gewonnen")
-            return True
-        if board[0][5]==board[1][4] ==board[2][3]==board[3][2]==board[4][1]==board[5][0] != " ":
-            print(f"{board[0][5]} hat gewonnen")
-            return True
+        for q in range(2):
+            if board[i][0+q] == board[i][1+q] == board[i][2+q] == board [i][3+q] != " ":
+                print (f" {board[i][0+q]} hat gewonnen")
+
+                return board[i][0+q]
+            if board[0+q][i] == board[1+q][i] == board[2+q][i] == board[3+q][i] != " ":
+                print (f" {board [0+q] [i]} hat gewonnen")
+                return board [0+q] [i]
+    oliure = (0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1),(2,2)
+    for pos in oliure:
+        if board[pos[0]][pos[1]] == board [pos[0]+1] [pos [1]+1] == board [pos[0]+2] [pos[1]+2] == board [pos[0]+3] [pos[1]+3] != " ":
+            print(f" {board [pos[0]] [pos [1]]} hat gewonnen")
+            return board [pos[0]] [pos [1]]
+    oreuli = (0,3),(1,3),(2,3),(0,4),(1,4),(2,4),(0,5),(1,5),(2,5)
+    for pos in oreuli:
+        if board [pos[0]][pos[1]] == board [pos[0]+1] [pos[1]-1] == board [pos[0]+2] [pos[1]-2] == board [pos[0]+3] [pos [1]-3] != " ":
+            print (f" {board [pos[0]] [pos[1]]} hat gewonnen")
+            return board [pos[0]] [pos[1]]
+
+
+
 
 #boolean wer wer an der rheie ist true ist X und flase ist O
 spieler = False
 draw_window()
 # Game loop
 run = True
+gamevorbei = False
 
 while run:
     for event in pygame.event.get():
         #Event zum Schließen vom fenster
         if event.type == pygame.QUIT:
             run = False
+        #if spieler == True:
+        #    XYALGO = Algorithmus(board)
+        #    print(XYALGO)
+        #    drawcircle(XYALGO[0],XYALGO[1])
+        #    spieler = False
+        #    pygame.display.update()
+
+        #if spieler == False:
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
             #Prüfen ob der mouse klick sich im feld befindet und ob das board an der stelle noch leer ist dann den spieler rein zeichenen
+            ## die horizontalen und vertikalen dinger sind die pixel welche mit den schleifen immer um 100 (einfeld) erhöht werden
             horizontalhunderter = 0
             horizontalfuenfundzwanziger = 25
             horizontalfuenfziger = 50
@@ -87,7 +107,7 @@ while run:
                 diagonalfuenfundsiebziger = 75
                 #diese schleife geht die diagonalen rheien durch
                 for i in range(6):
-                    if pos[0] >= diagonalhunderter and pos[0] <= diagonalhunderter+100 and pos[1] >= horizontalhunderter and pos[1] <= horizontalhunderter+100 and board[t][i] == " ":
+                    if pos[0] >= diagonalhunderter and pos[0] <= diagonalhunderter+100 and pos[1] >= horizontalhunderter and pos[1] <= horizontalhunderter+100 and board[t][i] == " " and gamevorbei == False:
                         if spieler == True:
                             drawcircle(diagonalfuenfziger, horizontalfuenfziger)
                             board[t][i] = "O"
@@ -104,8 +124,12 @@ while run:
                 horizontalfuenfundzwanziger = horizontalfuenfundzwanziger +100
                 horizontalfuenfziger = horizontalfuenfziger +100
                 horizontalfuenfundsiebziger = horizontalfuenfundsiebziger+100
-            if checkwinlosedraw() == True:
-                run = False
-            pygame.display.update()
+
+                #checken ob jemand gewonnen hat und dann das spiel deaktivieren aber nicht schließen
+                if gamevorbei == False:
+                    if checkwinloosdraw() == "X" or checkwinloosdraw() == "O":
+                        gamevorbei = True
+
+                pygame.display.update()
 # Quit Pygame
 pygame.quit()
