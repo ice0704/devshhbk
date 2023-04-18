@@ -1,15 +1,36 @@
+from math import inf
+from anytree import Node, RenderTree
+
 import pygame
 import sys
 
 pygame.init()
 
+class Position:
 
-class Pawn:
+    gameover = False
+
     def __init__(self, color, x, y):
         self.color = color
         self.x = x
         self.y = y
-        self.has_moved = False  # added variable to track if pawn has moved
+
+    def fillChildren(self):
+        return
+    def refreshChildren(self):
+        return
+
+
+class Pawn:
+
+    currentTurn = "white"
+
+    def __init__(self, color, x, y):
+        self.color = color
+        self.x = x
+        self.y = y
+        self.has_moved = False  # Variable, welche angibt, ob der Bauer sich bewegt hat
+        self.has_beaten = False  # Variable die angibt, ob geschlagen wurde
 
     def draw(self, surface, selected=False):
         radius = 30
@@ -25,21 +46,9 @@ class Pawn:
                 color = (0, 0, 0)
         pygame.draw.circle(surface, color, (self.x * 80 + 40, self.y * 80 + 40), radius)
 
-    def move(self, x, y, selected=False):
-        # move the piece if the destination is valid
-        if self.color == "white" and y == self.y - 1:
-            self.x = x
-            self.y = y
-            self.has_moved = True  # update has_moved after move
-        elif self.color == "black" and y == self.y + 1:
-            self.x = x
-            self.y = y
-            self.has_moved = True  # update has_moved after move
-        self.draw(board, selected=selected)  # draw the pawn with the selected flag
-
-
 # render the board and pawns
 def reRender():
+
     board.fill((255, 206, 158))
     for x in range(0, 6, 2):
         for y in range(0, 6, 2):
@@ -77,6 +86,8 @@ for x in range(0, 6, 2):
         squares.append(rect1)
         squares.append(rect2)
 
+print(squares)
+
 for pawn in pawns:
     pawn.draw(board, selected=False)  # pass selected flag
     # add the board to the screen
@@ -84,62 +95,133 @@ screen.blit(board, (20, 20))
 pygame.display.flip()
 print(squares)
 
+#Minimax Algorithmus mit Alpha-Beta-Pruning
+def minimax(position, depth, alpha, beta, maximizing_player):
+    if depth == 0 or position.gameover:
+        return position.evaluation
+
+    if maximizing_player is True:
+        max_eval = float(-inf)
+        for child in position:
+            eval = minimax(child, depth - 1, alpha, beta, False)
+            max_eval = max(max_eval, eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                break
+        return max_eval
+    else:
+        min_eval = float(inf)
+        for child in position:
+            eval = minimax(child, depth - 1, alpha, beta, True)
+            min_eval = min(min_eval, eval)
+            beta = min(beta, eval)
+            if beta <= alpha:
+                break
+        return min_eval
 
 def chessGame():
-    global selected_pawn
+    global selected_pawn, beaten_pawn, pawn_to_beat, last_pos
+
+    current_turn = "white"
+    run = True
+    last_pos = None
 
     # the game
-    while True:
+    while run is True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # get the position of the click
+                # Speichert die Position des Mouseklicks in der Variable pos
                 pos = pygame.mouse.get_pos()
 
-                # convert the position to board coordinates
+                # Konvertiert die Positionen in Boardkoordinaten
                 x = (pos[0] - 20) // 80
                 y = (pos[1] - 20) // 80
 
-                # check if a piece has been clicked
-                for pawn in pawns:
-                    if pawn.x == x and pawn.y == y:
-                        selected_pawn = pawn
+                if selected_pawn is None or (selected_pawn is not None and selected_pawn.color is not current_turn):
+                    # Prüft, ob ein Bauer angeklickt wurde
+                    for pawn in pawns:
+                        if pawn.x == x and pawn.y == y:
+                            selected_pawn = pawn
 
-                        print(pawn)
+                            print(pawn)
+                            break
+
+
+                    # Prüft, ob ein Bauer angeklickt wurde
+                    for pawn in pawns:
+                        if pawn.x == x and pawn.y == y:
+                            selected_pawn = pawn
+
+                            print(pawn)
+                            break
+                    last_pos = pos
+            elif event.type == pygame.MOUSEBUTTONUP and selected_pawn is not None and selected_pawn.color is \
+                    current_turn:
+                # Speichert die Position des Mouseklicks
+                pos = pygame.mouse.get_pos()
+
+                # Konvertiert die Positionen in Boardkoordinaten
+                x = (pos[0] - 20) // 80
+                y = (pos[1] - 20) // 80
+
+                for pawn in pawns:
+                    beaten_pawn = False
+                    if pawn.x == x and pawn.y == y and pawn.color is not selected_pawn.color:
+                        pawn_to_beat = pawn
+                        beaten_pawn = True
                         break
 
-            elif event.type == pygame.MOUSEBUTTONUP and selected_pawn is not None:
-                # get the position of the click
-                pos = pygame.mouse.get_pos()
-
-                # convert the position to board coordinates
-                x = (pos[0] - 20) // 80
-                y = (pos[1] - 20) // 80
-
-                # move the piece if the destination is valid
-                if selected_pawn.color == "white":
-                    if selected_pawn.y == 5 and y == 3 and x == selected_pawn.x:
-                        # move 2 squares if pawn has never moved before
+                # Spielfigur bewegen, wenn der Spielzug gültig ist
+                if selected_pawn.color == "white" and selected_pawn.color == current_turn:
+                    if selected_pawn.y == 5 and y == 3 and x == selected_pawn.x and beaten_pawn is False:
+                        # Möglichkeit beim ersten Spielzug zwei Felder zu bewegen
                         selected_pawn.x = x
                         selected_pawn.y = y
-                    elif y == selected_pawn.y - 1 and x == selected_pawn.x:
-                        # move 1 square
+                        current_turn = "black"
+                    elif y == selected_pawn.y - 1 and x == selected_pawn.x and beaten_pawn is False:
+                        # Ein Spielfeld nach vorne bewegen
                         selected_pawn.x = x
                         selected_pawn.y = y
-
-                elif selected_pawn.color == "black":
-                    if selected_pawn.y == 0 and y == 2 and x == selected_pawn.x:
-                        # move 2 squares if pawn has never moved before
+                        current_turn = "black"
+                    elif y == selected_pawn.y - 1 and x == selected_pawn.x - 1 and beaten_pawn is True:
                         selected_pawn.x = x
                         selected_pawn.y = y
-                    elif y == selected_pawn.y + 1 and x == selected_pawn.x:
-                        # move 1 square
+                        current_turn = "black"
+                        pawns.remove(pawn_to_beat)
+                    elif y == selected_pawn.y - 1 and x == selected_pawn.x + 1 and beaten_pawn is True:
                         selected_pawn.x = x
                         selected_pawn.y = y
+                        current_turn = "black"
+                        pawns.remove(pawn_to_beat)
+                elif selected_pawn.color == "black" and selected_pawn.color == current_turn:
+                    if selected_pawn.y == 0 and y == 2 and x == selected_pawn.x and beaten_pawn is False:
+                        # Möglichkeit beim ersten Spielzug zwei Felder zu bewegen
+                        selected_pawn.x = x
+                        selected_pawn.y = y
+                        current_turn = "white"
+                    elif y == selected_pawn.y + 1 and x == selected_pawn.x and beaten_pawn is False:
+                        # Ein Spielfeld nach vorne bewegen
+                        selected_pawn.x = x
+                        selected_pawn.y = y
+                        current_turn = "white"
+                    elif y == selected_pawn.y + 1 and x == selected_pawn.x - 1 and beaten_pawn is True:
+                        selected_pawn.x = x
+                        selected_pawn.y = y
+                        current_turn = "white"
+                        pawns.remove(pawn_to_beat)
+                    elif y == selected_pawn.y + 1 and x == selected_pawn.x + 1 and beaten_pawn is True:
+                        selected_pawn.x = x
+                        selected_pawn.y = y
+                        current_turn = "white"
+                        pawns.remove(pawn_to_beat)
+                if selected_pawn.color == "white" and selected_pawn.y == 0:
+                    run = False
+                    print("Weiß hat gewonnen")
+                elif selected_pawn.color == "black" and selected_pawn.y == 5:
+                    run = False
+                    print("Schwarz hat gewonnen")
                 reRender()
-
-
 chessGame()
