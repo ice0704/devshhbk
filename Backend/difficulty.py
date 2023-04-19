@@ -23,7 +23,7 @@ def difficulty(sizeX,sizeY, screen, userName, gameType):
         easyButton = Button(image=pygame.image.load("resources/test.png"), pos=(sizeX/2, sizeY/3), 
                             text_input="easy", font=font(40), base_color="#d7fcd4", hovering_color="Yellow")
         mediumButton = Button(image=pygame.image.load("resources/test.png"), pos=(sizeX/2, (sizeY/3)+150), 
-                            text_input="madium", font=font(40), base_color="#d7fcd4", hovering_color="Yellow")
+                            text_input="medium", font=font(40), base_color="#d7fcd4", hovering_color="Yellow")
         hardButton = Button(image=pygame.image.load("resources/test.png"), pos=(sizeX/2, (sizeY/3) +300), 
                             text_input="hard", font=font(40), base_color="#d7fcd4", hovering_color="Yellow")
         

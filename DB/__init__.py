@@ -26,7 +26,7 @@ def createDatabase():
         
         sqlAnweisungBauernschachTabelle = """
             CREATE TABLE 'Bauernschach' (
-            'Spiele ID' INTEGER NOT NULL UNIQUE,
+            'Spiele ID' VARCHAR(30) NOT NULL UNIQUE,
             'Username' VARCHAR(30),
             'Züge' INTEGER,
             'Schwierigkeitsgrad' INTEGER,

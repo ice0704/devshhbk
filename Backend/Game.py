@@ -22,6 +22,10 @@ screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Chess Game")
 backgroundIMG = pygame.image.load("resources/hideinpain.png")
 background = pygame.transform.scale(backgroundIMG,(sizeX, sizeY))
+
+backgroundIMGTwo = pygame.image.load("resources/wojak.jpg")
+backgroundTwo = pygame.transform.scale(backgroundIMGTwo,(sizeX, sizeY))
+
 manager = pygame_gui.UIManager((sizeX, sizeY))
 
 
@@ -185,7 +189,7 @@ def register(sizeX, sizeY, screen):
         
         manager.update(UI_REFRESH_RATE)
 
-        screen.blit(background, (0, 0))
+        screen.blit(backgroundTwo, (0, 0))
         screen.blit(MENU_TEXT, MENU_RECT)
         screen.blit(USERNAME_TEXT, USERNAME_RECT)
 
@@ -251,7 +255,7 @@ def login(sizeX, sizeY, screen):
         
         manager.update(UI_REFRESH_RATE)
 
-        screen.blit(background, (0, 0))
+        screen.blit(backgroundTwo, (0, 0))
         screen.blit(MENU_TEXT, MENU_RECT)
         screen.blit(USERNAME_TEXT, USERNAME_RECT)
 

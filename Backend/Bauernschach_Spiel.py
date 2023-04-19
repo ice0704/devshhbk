@@ -1,10 +1,10 @@
+import pygame, sys, uuid, pygame_gui
+
 from math import inf
 from anytree import Node, RenderTree
-
-import pygame
-import sys
-
-import pygame_gui
+from classes.button import Button
+from tkinter import messagebox
+from queries.postFinishedGame import postFinishedGameQuery
 
 
 
@@ -65,6 +65,9 @@ def reRender(sizeX, sizeY, screen):
     screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))
     pygame.display.flip()
 
+#defining font size and get font element
+def font(size): 
+    return pygame.font.Font("resources/mainFont.ttf", size)
 
 # set up the pawns
 pawns = []
@@ -116,32 +119,62 @@ def minimax(position, depth, alpha, beta, maximizing_player):
 
 def chessGame(sizeX,sizeY,screen, userName, difficulty):
     global selected_pawn, beaten_pawn, pawn_to_beat, last_pos
-
-    clock = pygame.time.Clock()
-    UI_REFRESH_RATE = clock.tick(60)/1000
-
     current_turn = "white"
     run = True
     last_pos = None
-    manager = pygame_gui.UIManager((sizeX, sizeY))
-
+    unique_ID = f"{uuid.uuid4()}"
+    print(type(unique_ID))
+  
     screen.fill("black")
     global selected_pawn
     screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))
-    pygame.display.flip()
+    
 
-    helpButton = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(((sizeX/1.2)-20, sizeY/1.12), (sizeX/6, 50)), text = "BACK",  manager=manager,
-                                            object_id='#helpButton')
+    backgroundIMG = pygame.image.load("resources/envi.jpg")
+    background = pygame.transform.scale(backgroundIMG,(sizeX, sizeY))
+
+    screen.blit(background, (0, 0))
+
+    reRender(sizeX, sizeY, screen)
 
     # the game
     while run is True:
+        
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+        showHelp = Button(image=pygame.image.load("resources/test.png"), pos=(sizeX-100, sizeY-50), 
+                            text_input="Regeln", font=font(30), base_color="#d7fcd4", hovering_color="Yellow")
+        
+        for button in [showHelp]:
+            button.changeColor(MENU_MOUSE_POS)
+            button.update(screen)
+            reRender(sizeX, sizeY, screen)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if showHelp.checkForInput(MENU_MOUSE_POS):
+                    
+                    messagebox.showinfo("""
+                    Es gibt zwei erlaubte Sorten von Zügen :
+                    1)	Ziehen
+                    kann ein Bauer, indem er ein Feld in Richtung der gegnerischen Grundlinie (das sind die Felder, auf denen anfangs die gegnerischen Bauern stehen) geht, aber nur sofern dieses Feld frei ist (also nicht von einem eigenen oder gegnerischen Bauern besetzt ist). 
+                    2)	Schlagen
+                    kann ein Bauer in Richtung der gegnerischen Grundlinie durch diagonales Ziehen in Richtung der gegnerischen Grundlinie, aber nur auf ein Feld, auf dem ein gegnerischer Bauer steht. 
+                    """, """Bauernschach
+                    ist eine simple Variante des Schachs, die nur mit Bauern gespielt wird. In der Ausgansstellung stehen dabei die weißen bzw. schwarzen Spielfiguren (Bauern) auf der jeweiligen Grundlinie. Die Spieler machen abwechselnd einen Zug, wobei Weiß beginnt. 
 
-            if(event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_object_id == '#helpButton'):
-                print("hi")
+                    Für den Prototypen soll immer der menschliche Spieler beginnen und die KI entsprechend mit den schwarzen Spielfiguren ziehen. 
+
+                    Es gibt zwei erlaubte Sorten von Zügen :
+                    1)	Ziehen
+                    kann ein Bauer, indem er ein Feld in Richtung der gegnerischen Grundlinie (das sind die Felder, auf denen anfangs die gegnerischen Bauern stehen) geht, aber nur sofern dieses Feld frei ist (also nicht von einem eigenen oder gegnerischen Bauern besetzt ist). 
+                    2)	Schlagen
+                    kann ein Bauer in Richtung der gegnerischen Grundlinie durch diagonales Ziehen in Richtung der gegnerischen Grundlinie, aber nur auf ein Feld, auf dem ein gegnerischer Bauer steht. 
+
+                    Ziel des Spieles ist es, einen Bauern auf die generische Grundlinie zu platzieren; wenn das gelingt, ist das Spiel sofort zu Ende und die Farbe, die das erreicht hat, hat gewonnen. Wenn ein Spieler nicht mehr ziehen kann, oder überhaupt keine Figuren mehr hat, ist das Spiel für ihn als verloren zu werten. Ein unentschieden ist daher in dieser Variante nicht möglich.
+                    """)
                 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Speichert die Position des Mouseklicks in der Variable pos
@@ -231,11 +264,15 @@ def chessGame(sizeX,sizeY,screen, userName, difficulty):
                 if selected_pawn.color == "white" and selected_pawn.y == 0:
                     run = False
                     print("Weiß hat gewonnen")
+                    print(f"{unique_ID}, {userName}, turns, {difficulty}, {0}")
+                    postFinishedGameQuery(unique_ID, userName, 15, 2, False)
+                    
+
                 elif selected_pawn.color == "black" and selected_pawn.y == 5:
                     run = False
                     print("Schwarz hat gewonnen")
+                    print(f"{unique_ID}, {userName}, turns, {difficulty}, {1}")
+                    postFinishedGameQuery(unique_ID, userName, 11, 2, True)
+
                 reRender(sizeX, sizeY, screen)
 
-                manager.process_events(event)
-        
-            manager.update(UI_REFRESH_RATE)
