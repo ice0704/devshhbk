@@ -1,4 +1,5 @@
 import pygame, sys, pygame_gui
+from Tic_Tac_Toe_Spiel import ttt
 from classes.button import Button
 from Bauernschach_Spiel import *
 
@@ -48,13 +49,13 @@ def difficulty(sizeX,sizeY, screen, userName, gameType):
                         chessGame(sizeX, sizeY, screen, userName,3)
             if gameType == "ttt":
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                        if easyButton.checkForInput(MENU_MOUSE_POS):
-                            print("ttt")
-                            chessGame(sizeX, sizeY, screen, userName, 1)
-                        if mediumButton.checkForInput(MENU_MOUSE_POS):
-                            chessGame(sizeX, sizeY, screen, userName, 2)
-                        if hardButton.checkForInput(MENU_MOUSE_POS):
-                            chessGame(sizeX, sizeY, screen, userName,3)
+                    if easyButton.checkForInput(MENU_MOUSE_POS):
+                        print("ttt")
+                        ttt(userName,1)
+                    if mediumButton.checkForInput(MENU_MOUSE_POS):
+                        ttt(userName, 2)
+                    if hardButton.checkForInput(MENU_MOUSE_POS):
+                        ttt(userName, 3)
   
 
         pygame.display.update()

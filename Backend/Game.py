@@ -203,7 +203,6 @@ def register(sizeX, sizeY, screen):
 
         pygame.display.update()
 
-
 def login(sizeX, sizeY, screen):
     pygame.display.set_caption("LOGIN")
     clock = pygame.time.Clock()
@@ -268,7 +267,5 @@ def login(sizeX, sizeY, screen):
         manager.draw_ui(screen)
 
         pygame.display.update()
-
-
 
 startPage(sizeX, sizeY, screen)

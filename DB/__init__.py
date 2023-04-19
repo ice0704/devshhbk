@@ -12,15 +12,14 @@ def createDatabase():
             );"""
 
         sqlAnweisungTicTacToeTabelle = """
-            CREATE TABLE 'Tic Tac Toe' (
-            'Spiele ID' INTEGER NOT NULL UNIQUE,
-            'User ID' TEXT NO NULL UNIQUE,
+            CREATE TABLE 'TTT' (
+            'Spiele ID' VAR(30) NOT NULL UNIQUE,
+            'Username' VARCHAR(30),
             'Züge' INTEGER,
             'Schwierigkeitsgrad' INTEGER,
-            'Gewonnen' TEXT,
-            'Unentschieden' TEXT,
-            'Verloren' TEXT,
-            PRIMARY KEY('Spiele ID')
+            'Ergebnis' BOOLEAN, 
+            PRIMARY KEY('Spiele ID'),
+            FOREIGN KEY(Username) REFERENCES User(Username)
             );"""
 
         

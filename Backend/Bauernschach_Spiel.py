@@ -4,7 +4,7 @@ from math import inf
 from anytree import Node, RenderTree
 from classes.button import Button
 from tkinter import messagebox
-from queries.postFinishedGame import postFinishedGameQuery
+from queries.postFinishedGame import postFinishedChessQuery
 
 
 
@@ -265,14 +265,14 @@ def chessGame(sizeX,sizeY,screen, userName, difficulty):
                     run = False
                     print("Weiß hat gewonnen")
                     print(f"{unique_ID}, {userName}, turns, {difficulty}, {0}")
-                    postFinishedGameQuery(unique_ID, userName, 15, 2, False)
+                    postFinishedChessQuery(unique_ID, userName, "turns?", 2, False)
                     
 
                 elif selected_pawn.color == "black" and selected_pawn.y == 5:
                     run = False
                     print("Schwarz hat gewonnen")
                     print(f"{unique_ID}, {userName}, turns, {difficulty}, {1}")
-                    postFinishedGameQuery(unique_ID, userName, 11, 2, True)
+                    postFinishedChessQuery(unique_ID, userName, "turns", 2, True)
 
                 reRender(sizeX, sizeY, screen)
 
