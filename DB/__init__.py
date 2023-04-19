@@ -7,17 +7,8 @@ zeiger = connection.cursor()
 def createDatabase():
     try:
         sqlAnweisungUserTabelle = """CREATE TABLE 'User' (
-            'User-ID' TEXT NOT NULL UNIQUE,
-            'Name' TEXT UNIQUE,
-            'Spiele TicTacToe' INTEGER,
-            'Gewonnen TicTacToe' INTEGER,
-            'Unentschieden TicTacToe' INTEGER,
-            'Verloren TicTacToe' INTEGER,
-            'Spiele Bauernschach' INTEGER,
-            'Gewonnen Bauernschach' INTEGER,
-            'Unentschieden Bauernschach' INTEGER,
-            'Verloren Bauernschach' INTEGER,
-            PRIMARY KEY('User-ID')
+            'Username'  VARCHAR(30) NOT NULL UNIQUE,
+            PRIMARY KEY('Username')
             );"""
 
         sqlAnweisungTicTacToeTabelle = """

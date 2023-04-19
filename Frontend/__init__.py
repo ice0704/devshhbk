@@ -1,61 +1,17 @@
-import pygame, sys
+import pygame, sys, pygame_gui
 from classes.button import Button
+from chessGame import *
+from queries.getAllsorted import getAllSortedByTurns
+from queries.createUser import *
+
 
 
 pygame.init()
-
-class Pawn:
-    def __init__(self, color, x, y):
-        self.color = color
-        self.x = x
-        self.y = y
-        self.has_moved = False  # added variable to track if pawn has moved
-
-    def draw(self, surface, selected=False):
-        radius = 30
-        if self.color == "white":
-            if selected:
-                color = (0, 255, 0)  # green if selected
-            else:
-                color = (255, 255, 255)
-        else:
-            if selected:
-                color = (0, 255, 0)  # green if selected
-            else:
-                color = (0, 0, 0)
-        pygame.draw.circle(surface, color, (self.x * 80 + 40, self.y * 80 + 40), radius)
-
-    def move(self, x, y, selected=False):
-        # move the piece if the destination is valid
-        if self.color == "white" and y == self.y - 1:
-            self.x = x
-            self.y = y
-            self.has_moved = True  # update has_moved after move
-        elif self.color == "black" and y == self.y + 1:
-            self.x = x
-            self.y = y
-            self.has_moved = True  # update has_moved after move
-        self.draw(board, selected=selected)  # draw the pawn with the selected flag
 
 #defining font size and get font element
 def font(size): 
     return pygame.font.Font("resources/mainFont.ttf", size)
     
-# render the board and pawns
-def reRender():
-    board.fill((255, 206, 158))
-    for x in range(0, 6, 2):
-        for y in range(0, 6, 2):
-            rect1 = pygame.draw.rect(board, (210, 180, 140), (x * 80, y * 80, 80, 80))
-            rect2 = pygame.draw.rect(board, (210, 180, 140), ((x + 1) * 80, (y + 1) * 80, 80, 80))
-
-    for pawn in pawns:
-        pawn.draw(board, selected=(pawn == selected_pawn))
-
-        # add the board to the screen
-    screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))
-    pygame.display.flip()
-
 # set up the window
 sizeX = 520*1.7
 sizeY = 520*1.3
@@ -65,33 +21,11 @@ screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Chess Game")
 backgroundIMG = pygame.image.load("resources/hideinpain.png")
 background = pygame.transform.scale(backgroundIMG,(sizeX, sizeY))
-
-
-# set up the pawns
-pawns = []
-for i in range(6):
-    pawns.append(Pawn("black", i, 0))
-    pawns.append(Pawn("white", i, 5))
-selected_pawn = None
-
-# set up the board
-squares = []
-board = pygame.Surface((480, 480))
-board.fill((255, 206, 158))
-for x in range(0, 6, 2):
-    for y in range(0, 6, 2):
-        rect1 = pygame.draw.rect(board, (210, 180, 140), (x * 80, y * 80, 80, 80))
-        rect2 = pygame.draw.rect(board, (210, 180, 140), ((x + 1) * 80, (y + 1) * 80, 80, 80))
-        squares.append(rect1)
-        squares.append(rect2)
-
-for pawn in pawns:
-    pawn.draw(board, selected=False)  
-    # add the board to the screen
+manager = pygame_gui.UIManager((sizeX, sizeY))
 
 
 
-def mainMenu():
+def mainMenu(sizeX,sizeY, screen):
     pygame.display.set_caption("Menü")
     while True:
         screen.blit(background, (0, 0))
@@ -122,106 +56,211 @@ def mainMenu():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if playChessButton.checkForInput(MENU_MOUSE_POS):
-                    chessGame()
+                    chessGame(sizeX, sizeY, screen)
                 if playToeButton.checkForInput(MENU_MOUSE_POS):
                     chessGame()
                 if showRanking.checkForInput(MENU_MOUSE_POS):
-                    showRanking()
+                    showRankingF()
                 if quitButton.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     sys.exit()
 
         pygame.display.update()
 
-# ' geholene Datananzeigen'
-# def showRanking():
-#     pygame.display.set_caption("Ranking")
-#     while True:
-#         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+def showRankingF():
+    pygame.display.set_caption("Ranking")
+    testest = getAllSortedByTurns()
+    for row in testest:
+        print("name", row[1], row[3])
 
-#         screen.fill("white")
-
-#         OPTIONS_TEXT = font(45).render("This is the OPTIONS screen.", True, "Black")
-#         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))
-#         screen.blit(OPTIONS_TEXT, OPTIONS_RECT)
-
-#         OPTIONS_BACK = Button(image=None, pos=(640, 460), 
-#                             text_input="BACK", font=font(40), base_color="#d7fcd4", hovering_color="Yellow")
-
-#         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
-#         OPTIONS_BACK.update(screen)
-
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 pygame.quit()
-#                 sys.exit()
-#             if event.type == pygame.MOUSEBUTTONDOWN:
-#                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
-#                     mainMenu()
-
-#         pygame.display.update()
-
-
-    
-def chessGame():
-    screen.fill("black")
-    global selected_pawn
-    screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))
-    pygame.display.flip()
-
-    # the game
     while True:
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+
+        screen.fill("white")
+
+        OPTIONS_TEXT = font(45).render("This is the OPTIONS screen.", True, "Black")
+        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))
+        screen.blit(OPTIONS_TEXT, OPTIONS_RECT)
+
+        OPTIONS_BACK = Button(image=None, pos=(640, 460), 
+                            text_input="BACK", font=font(40), base_color="#d7fcd4", hovering_color="Yellow")
+
+        OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
+        OPTIONS_BACK.update(screen)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # get the position of the click
-                pos = pygame.mouse.get_pos()
-                print(pos)
-                # convert the position to board coordinates
-                x = (pos[0] - (int)((sizeX/2)-(480/2))) // 80
-                y = (pos[1] - (int)((sizeY/2)-(480/2))) // 80
-                print(x,y)
-                # check if a piece has been clicked
-                for pawn in pawns:
-                    if pawn.x == x and pawn.y == y:
-                        selected_pawn = pawn
+                if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
+                    mainMenu()
 
-                        print(pawn)
-                        break
+        pygame.display.update()
 
-            elif event.type == pygame.MOUSEBUTTONUP and selected_pawn is not None:
-                # get the position of the click
-                pos = pygame.mouse.get_pos()
+def startPage(sizeX, sizeY, screen):
+    pygame.display.set_caption("Welcome")
+    clock = pygame.time.Clock()
+    while True:
+        screen.blit(background, (0, 0))
 
-                # convert the position to board coordinates
-                x = (pos[0] - (int)((sizeX/2)-(480/2))) // 80
-                y = (pos[1] - (int)((sizeY/2)-(480/2))) // 80
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-                # move the piece if the destination is valid
-                if selected_pawn.color == "white":
-                    if selected_pawn.y == 5 and y == 3 and x == selected_pawn.x:
-                        # move 2 squares if pawn has never moved before
-                        selected_pawn.x = x
-                        selected_pawn.y = y
-                    elif y == selected_pawn.y - 1 and x == selected_pawn.x:
-                        # move 1 square
-                        selected_pawn.x = x
-                        selected_pawn.y = y
+        MENU_TEXT = font(100).render("Welcome", True, "#000000")
+        MENU_RECT = MENU_TEXT.get_rect(center=(sizeX/2, 60))
 
-                elif selected_pawn.color == "black":
-                    if selected_pawn.y == 0 and y == 2 and x == selected_pawn.x:
-                        # move 2 squares if pawn has never moved before
-                        selected_pawn.x = x
-                        selected_pawn.y = y
-                    elif y == selected_pawn.y + 1 and x == selected_pawn.x:
-                        # move 1 square
-                        selected_pawn.x = x
-                        selected_pawn.y = y
+        registerButton = Button(image=pygame.image.load("resources/test.png"), pos=(sizeX/4, sizeY/2), 
+                            text_input="Anmelden", font=font(40), base_color="#d7fcd4", hovering_color="Yellow")
+        loginButton = Button(image=pygame.image.load("resources/test.png"), pos=((sizeX/4)*3, sizeY/2), 
+                            text_input="Login", font=font(40), base_color="#d7fcd4", hovering_color="Yellow")
+        screen.blit(MENU_TEXT, MENU_RECT)
+
+        for button in [registerButton, loginButton]:
+            button.changeColor(MENU_MOUSE_POS)
+            button.update(screen)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if registerButton.checkForInput(MENU_MOUSE_POS):
+                    register(sizeX, sizeY, screen)
+                if loginButton.checkForInput(MENU_MOUSE_POS):
+                    login(sizeX, sizeY, screen)
+        pygame.display.update()
+
+def register(sizeX, sizeY, screen):
+    pygame.display.set_caption("REGISTIEREN")
+    clock = pygame.time.Clock()
+
+    #u wanna know then go read the doc https://pygame-gui.readthedocs.io/en/latest/pygame_gui.elements.html?highlight=pygame_gui.elements.UIButton#pygame_gui.elements.UIButton
+    text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((sizeX/4, sizeY/3), (sizeX/2, 50)), manager=manager,
+                                                object_id='#main_text_entry')
+    submitButton = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((sizeX/4, sizeY/2), (sizeX/2, 100)), text = "SUBMIT",  manager=manager,
+                                                object_id='#main_button_entry')
+    backButton = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(((sizeX/1.2)-20, sizeY/1.12), (sizeX/6, 50)), text = "BACK",  manager=manager,
+                                                object_id='#backButton')
+    error_msg = None # initialize error message to None
+
+    while True:
+
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+        UI_REFRESH_RATE = clock.tick(60)/1000
+
+        MENU_TEXT = font(100).render("REGISTIEREN", True, "#000000")
+        MENU_RECT = MENU_TEXT.get_rect(center=(sizeX/2, 60))
+
+        USERNAME_TEXT = font(30).render("USERNAME:", True, "#355E3B")
+        USERNAME_RECT = MENU_TEXT.get_rect(center=(sizeX/1.5, (sizeY/3)+20))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
                 
-                reRender()
+            if (event.type == pygame_gui.UI_TEXT_ENTRY_CHANGED and
+                event.ui_object_id == '#main_text_entry'):
+                 userName = event.text
+
+            if(event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_object_id == '#main_button_entry'):
+                try:
+                    createUserQuery(userName)
+                    startPage(sizeX, sizeY, screen)
+                except Exception as e:
+                    error_msg = str(e) # set error message to the exception string
+                    print(error_msg) # print error message to console
+            
+            if(event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_object_id == '#backButton'):
+                    text_input.kill()
+                    startPage(sizeX, sizeY, screen)
+  
+                
+            manager.process_events(event)
+        
+        manager.update(UI_REFRESH_RATE)
+
+        screen.blit(background, (0, 0))
+        screen.blit(MENU_TEXT, MENU_RECT)
+        screen.blit(USERNAME_TEXT, USERNAME_RECT)
+
+        if error_msg: # if error message exists, display it on the screen
+            ERROR_TEXT = font(20).render(error_msg, True, "#FF0000")
+            ERROR_RECT = ERROR_TEXT.get_rect(center=(sizeX/2.8, (sizeY/3)+70))
+            screen.blit(ERROR_TEXT, ERROR_RECT)
+        
+
+        manager.draw_ui(screen)
+
+        pygame.display.update()
 
 
-mainMenu()
+def login(sizeX, sizeY, screen):
+    pygame.display.set_caption("LOGIN")
+    clock = pygame.time.Clock()
+
+    #u wanna know then go read the doc https://pygame-gui.readthedocs.io/en/latest/pygame_gui.elements.html?highlight=pygame_gui.elements.UIButton#pygame_gui.elements.UIButton
+    text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((sizeX/4, sizeY/3), (sizeX/2, 50)), manager=manager,
+                                                object_id='#main_text_entry')
+    submitButton = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((sizeX/4, sizeY/2), (sizeX/2, 100)), text = "LOGIN",  manager=manager,
+                                                object_id='#main_button_entry')
+    backButton = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(((sizeX/1.2)-20, sizeY/1.12), (sizeX/6, 50)), text = "BACK",  manager=manager,
+                                                object_id='#backButton')
+    error_msg = None # initialize error message to None
+
+    while True:
+        screen.blit(background, (0, 0))
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+        UI_REFRESH_RATE = clock.tick(60)/1000
+
+        MENU_TEXT = font(100).render("LOGIN", True, "#000000")
+        MENU_RECT = MENU_TEXT.get_rect(center=(sizeX/2, 60))
+
+        USERNAME_TEXT = font(30).render("USERNAME:", True, "#355E3B")
+        USERNAME_RECT = MENU_TEXT.get_rect(center=(sizeX/2.25, (sizeY/3)+20))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                
+            if (event.type == pygame_gui.UI_TEXT_ENTRY_CHANGED and
+                event.ui_object_id == '#main_text_entry'):
+                 userName = event.text
+
+            if(event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_object_id == '#main_button_entry'):
+                try:
+                    checkingExistingUser(userName)
+                    mainMenu(sizeX, sizeY, screen)
+                except Exception as e:
+                    error_msg = str(e) # set error message to the exception string
+                    print(error_msg) # print error message to console
+            
+            if(event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_object_id == '#backButton'):
+                    text_input.kill()
+                    startPage(sizeX, sizeY, screen)
+  
+                
+            manager.process_events(event)
+        
+        manager.update(UI_REFRESH_RATE)
+
+        screen.blit(background, (0, 0))
+        screen.blit(MENU_TEXT, MENU_RECT)
+        screen.blit(USERNAME_TEXT, USERNAME_RECT)
+
+        if error_msg: # if error message exists, display it on the screen
+            ERROR_TEXT = font(20).render(error_msg, True, "#FF0000")
+            ERROR_RECT = ERROR_TEXT.get_rect(center=(sizeX/2.8, (sizeY/3)+70))
+            screen.blit(ERROR_TEXT, ERROR_RECT)
+        
+
+        manager.draw_ui(screen)
+
+        pygame.display.update()
+
+
+
+startPage(sizeX, sizeY, screen)
