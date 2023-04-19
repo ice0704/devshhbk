@@ -1,0 +1,71 @@
+Index: Backend/Tictactow_Algorytmus.py
+===================================================================
+diff --git a/Backend/Tictactow_Algorytmus.py b/Backend/Tictactow_Algorytmus.py
+--- a/Backend/Tictactow_Algorytmus.py	
++++ b/Backend/Tictactow_Algorytmus.py	
+@@ -2,7 +2,7 @@
+ def checkwinloosdraw(board):
+     for i in range(6):
+         for q in range(2):
+-            if board[i][0 + q] == board[i][1 + q] == board[i][2 + q] == board[i][3 + q] != " "
++            if board[i][0 + q] == board[i][1 + q] == board[i][2 + q] == board[i][3 + q] != " ":
+                 return board[i][0 + q]
+ 
+             if board[0 + q][i] == board[1 + q][i] == board[2 + q][i] == board[3 + q][i] != " ":
+@@ -20,14 +20,15 @@
+ 
+ 
+ 
+-def Algorithmus(board):
+-    optimalesfeld = minimax(board,5)
++def Algorithmus(board,tiefe):
++    optimalesfeld = minimax(board,tiefe)
+     XXX = ((optimalesfeld[0] -1)*100)+50
+     YYY = ((optimalesfeld[1] -1)*100)+50
+     return [XXX,YYY]
+ 
+ 
+-
++global akutelletiefe
++aktuelletiefe = 1
+ def minimax(board,tiefe):
+ 
+     wertung = [[" ", " ", " ", " ", " ", " "],
+@@ -37,26 +38,31 @@
+                [" ", " ", " ", " ", " ", " "],
+                [" ", " ", " ", " ", " ", " "]]
+ 
+-    aktuelletiefe = 0
+     for i in range(6):
+         for u in range(6):
+             boardcopy = board
+-            print(boardcopy)
++            #print(boardcopy)
+             if boardcopy[i][u] == " ":
+-
++                print("hey")
+                 boardcopy[i][u] = "O"
+ 
+                 #wenn die KI Gewinnt dann ist die wertung 1
+                 if checkwinloosdraw(boardcopy) == "O":
+                     wertung[i][u] = 1
++
+                 #wenn die Spieler Gewinnt ist die Wertung -1
+                 if checkwinloosdraw(boardcopy) == "X":
+                     wertung[i][u] = -1
++
+                 # wenn niemand gewonnen hat ist wird erneut der min max ausgeführt wenn die tiefe noch nicht erreicht ist
+                 if checkwinloosdraw(boardcopy) != "X" and checkwinloosdraw(boardcopy) != "O":
+-                    if tiefe != aktuelletiefe:
+-                        wertung[i][u] = minimax(boardcopy,tiefe)
+-                    aktuelletiefe = aktuelletiefe + 1
++                    print(aktuelletiefe,tiefe)
++                    print("s")
++                    if aktuelletiefe != tiefe:
++                    #    wertung[i][u] = minimax(boardcopy,tiefe)
++                        aktuelletiefe = aktuelletiefe + 1
++                    #    print(aktuelletiefe)
+ 
++                boardcopy[i][u] = " "
+     return [0,0]
+ 

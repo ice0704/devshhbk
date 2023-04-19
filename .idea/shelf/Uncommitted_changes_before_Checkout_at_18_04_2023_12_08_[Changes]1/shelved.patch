@@ -1,0 +1,206 @@
+Index: Backend/Tic_Tac_Toe_Spiel.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Backend/Tic_Tac_Toe_Spiel.py b/Backend/Tic_Tac_Toe_Spiel.py
+--- a/Backend/Tic_Tac_Toe_Spiel.py	
++++ b/Backend/Tic_Tac_Toe_Spiel.py	
+@@ -83,52 +83,52 @@
+         #Event zum Schließen vom fenster
+         if event.type == pygame.QUIT:
+             run = False
+-        #if spieler == True:
+-        #    XYALGO = Algorithmus(board)
+-        #    print(XYALGO)
+-        #    drawcircle(XYALGO[0],XYALGO[1])
+-        #    spieler = False
+-        #    pygame.display.update()
++        if spieler == True:
++            XYALGO = Algorithmus(board,5)
++            print(XYALGO)
++            drawcircle(XYALGO[0],XYALGO[1])
++            spieler = False
++            pygame.display.update()
+ 
+-        #if spieler == False:
+-        if event.type == pygame.MOUSEBUTTONUP:
+-            pos = pygame.mouse.get_pos()
+-            #Prüfen ob der mouse klick sich im feld befindet und ob das board an der stelle noch leer ist dann den spieler rein zeichenen
+-            ## die horizontalen und vertikalen dinger sind die pixel welche mit den schleifen immer um 100 (einfeld) erhöht werden
+-            horizontalhunderter = 0
+-            horizontalfuenfundzwanziger = 25
+-            horizontalfuenfziger = 50
+-            horizontalfuenfundsiebziger = 75
+-            #schleife durch die horizontalen rheien
+-            for t in range(6):
+-                diagonalhunderter = 0
+-                diagonalfuenundzwanziger = 25
+-                diagonalfuenfziger = 50
+-                diagonalfuenfundsiebziger = 75
+-                #diese schleife geht die diagonalen rheien durch
+-                for i in range(6):
+-                    if pos[0] >= diagonalhunderter and pos[0] <= diagonalhunderter+100 and pos[1] >= horizontalhunderter and pos[1] <= horizontalhunderter+100 and board[t][i] == " " and gamevorbei == False:
+-                        if spieler == True:
+-                            drawcircle(diagonalfuenfziger, horizontalfuenfziger)
+-                            board[t][i] = "O"
+-                            spieler = False
+-                        elif spieler == False:
+-                            drawx((diagonalfuenundzwanziger, horizontalfuenfundzwanziger), (diagonalfuenfundsiebziger, horizontalfuenfundsiebziger), (diagonalfuenundzwanziger, horizontalfuenfundsiebziger), (diagonalfuenfundsiebziger, horizontalfuenfundzwanziger))
+-                            board[t][i] = "X"
+-                            spieler = True
+-                    diagonalhunderter = diagonalhunderter + 100
+-                    diagonalfuenfziger = diagonalfuenfziger + 100
+-                    diagonalfuenundzwanziger = diagonalfuenundzwanziger + 100
+-                    diagonalfuenfundsiebziger = diagonalfuenfundsiebziger + 100
+-                horizontalhunderter = horizontalhunderter +100
+-                horizontalfuenfundzwanziger = horizontalfuenfundzwanziger +100
+-                horizontalfuenfziger = horizontalfuenfziger +100
+-                horizontalfuenfundsiebziger = horizontalfuenfundsiebziger+100
++        if spieler == False:
++            if event.type == pygame.MOUSEBUTTONUP:
++                pos = pygame.mouse.get_pos()
++                #Prüfen ob der mouse klick sich im feld befindet und ob das board an der stelle noch leer ist dann den spieler rein zeichenen
++                ## die horizontalen und vertikalen dinger sind die pixel welche mit den schleifen immer um 100 (einfeld) erhöht werden
++                horizontalhunderter = 0
++                horizontalfuenfundzwanziger = 25
++                horizontalfuenfziger = 50
++                horizontalfuenfundsiebziger = 75
++                #schleife durch die horizontalen rheien
++                for t in range(6):
++                    diagonalhunderter = 0
++                    diagonalfuenundzwanziger = 25
++                    diagonalfuenfziger = 50
++                    diagonalfuenfundsiebziger = 75
++                    #diese schleife geht die diagonalen rheien durch
++                    for i in range(6):
++                        if pos[0] >= diagonalhunderter and pos[0] <= diagonalhunderter+100 and pos[1] >= horizontalhunderter and pos[1] <= horizontalhunderter+100 and board[t][i] == " " and gamevorbei == False:
++                            if spieler == True:
++                                drawcircle(diagonalfuenfziger, horizontalfuenfziger)
++                                board[t][i] = "O"
++                                spieler = False
++                            elif spieler == False:
++                                drawx((diagonalfuenundzwanziger, horizontalfuenfundzwanziger), (diagonalfuenfundsiebziger, horizontalfuenfundsiebziger), (diagonalfuenundzwanziger, horizontalfuenfundsiebziger), (diagonalfuenfundsiebziger, horizontalfuenfundzwanziger))
++                                board[t][i] = "X"
++                                spieler = True
++                        diagonalhunderter = diagonalhunderter + 100
++                        diagonalfuenfziger = diagonalfuenfziger + 100
++                        diagonalfuenundzwanziger = diagonalfuenundzwanziger + 100
++                        diagonalfuenfundsiebziger = diagonalfuenfundsiebziger + 100
++                    horizontalhunderter = horizontalhunderter +100
++                    horizontalfuenfundzwanziger = horizontalfuenfundzwanziger +100
++                    horizontalfuenfziger = horizontalfuenfziger +100
++                    horizontalfuenfundsiebziger = horizontalfuenfundsiebziger+100
+ 
+-                #checken ob jemand gewonnen hat und dann das spiel deaktivieren aber nicht schließen
+-                if gamevorbei == False:
+-                    if checkwinloosdraw() == "X" or checkwinloosdraw() == "O":
+-                        gamevorbei = True
++                    #checken ob jemand gewonnen hat und dann das spiel deaktivieren aber nicht schließen
++                    if gamevorbei == False:
++                        if checkwinloosdraw() == "X" or checkwinloosdraw() == "O":
++                            gamevorbei = True
+ 
+                 pygame.display.update()
+ # Quit Pygame
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	
++++ b/.idea/misc.xml	
+@@ -1,4 +1,4 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (devshhbk)" project-jdk-type="Python SDK" />
+ </project>
+\ No newline at end of file
+Index: .idea/devshhbk.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/devshhbk.iml b/.idea/devshhbk.iml
+--- a/.idea/devshhbk.iml	
++++ b/.idea/devshhbk.iml	
+@@ -1,7 +1,9 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <module type="PYTHON_MODULE" version="4">
+   <component name="NewModuleRootManager">
+-    <content url="file://$MODULE_DIR$" />
++    <content url="file://$MODULE_DIR$">
++      <excludeFolder url="file://$MODULE_DIR$/venv" />
++    </content>
+     <orderEntry type="inheritedJdk" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	
++++ b/.idea/workspace.xml	
+@@ -1,9 +1,15 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="AutoImportSettings">
++    <option name="autoReloadType" value="SELECTIVE" />
++  </component>
+   <component name="ChangeListManager">
+     <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="verschiebung code bauernschach">
++      <change beforePath="$PROJECT_DIR$/.idea/devshhbk.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/devshhbk.iml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/Backend/Tic_Tac_Toe_Spiel.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/Tic_Tac_Toe_Spiel.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/Backend/Tictactow_Algorytmus.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/Tictactow_Algorytmus.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -20,7 +26,7 @@
+   <component name="Git.Settings">
+     <option name="RECENT_BRANCH_BY_REPOSITORY">
+       <map>
+-        <entry key="$PROJECT_DIR$" value="dv" />
++        <entry key="$PROJECT_DIR$" value="master" />
+       </map>
+     </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+@@ -91,6 +97,7 @@
+     </configuration>
+     <recent_temporary>
+       <list>
++        <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
+         <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
+       </list>
+     </recent_temporary>
+@@ -118,7 +125,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1680169719176</updated>
+     </task>
+-    <option name="localTasksCounter" value="3" />
++    <task id="LOCAL-00003" summary="anpassung von win überprüfung auf 4 felder">
++      <created>1681806327834</created>
++      <option name="number" value="00003" />
++      <option name="presentableId" value="LOCAL-00003" />
++      <option name="project" value="LOCAL" />
++      <updated>1681806327834</updated>
++    </task>
++    <option name="localTasksCounter" value="4" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -135,6 +149,7 @@
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="keine ahnung" />
+     <MESSAGE value="verschiebung code bauernschach" />
+-    <option name="LAST_COMMIT_MESSAGE" value="verschiebung code bauernschach" />
++    <MESSAGE value="anpassung von win überprüfung auf 4 felder" />
++    <option name="LAST_COMMIT_MESSAGE" value="anpassung von win überprüfung auf 4 felder" />
+   </component>
+ </project>
+\ No newline at end of file

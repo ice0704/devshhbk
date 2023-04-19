@@ -1,0 +1,137 @@
+Index: Backend/Tictactow_Algorytmus.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\r\ndef checkwinloosdraw(board):\r\n    for i in range(6):\r\n        for q in range(2):\r\n            if board[i][0 + q] == board[i][1 + q] == board[i][2 + q] == board[i][3 + q] != \" \"\r\n                return board[i][0 + q]\r\n\r\n            if board[0 + q][i] == board[1 + q][i] == board[2 + q][i] == board[3 + q][i] != \" \":\r\n                return board[0 + q][i]\r\n\r\n    oliure = (0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)\r\n    for pos in oliure:\r\n        if board[pos[0]][pos[1]] == board[pos[0] + 1][pos[1] + 1] == board[pos[0] + 2][pos[1] + 2] == board[pos[0] + 3][pos[1] + 3] != \" \":\r\n            return board[pos[0]][pos[1]]\r\n\r\n    oreuli = (0, 3), (1, 3), (2, 3), (0, 4), (1, 4), (2, 4), (0, 5), (1, 5), (2, 5)\r\n    for pos in oreuli:\r\n        if board[pos[0]][pos[1]] == board[pos[0] + 1][pos[1] - 1] == board[pos[0] + 2][pos[1] - 2] == board[pos[0] + 3][pos[1] - 3] != \" \":\r\n            return board[pos[0]][pos[1]]\r\n\r\n\r\n\r\ndef Algorithmus(board):\r\n    optimalesfeld = minimax(board,5)\r\n    XXX = ((optimalesfeld[0] -1)*100)+50\r\n    YYY = ((optimalesfeld[1] -1)*100)+50\r\n    return [XXX,YYY]\r\n\r\n\r\n\r\ndef minimax(board,tiefe):\r\n\r\n    wertung = [[\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"]]\r\n\r\n    aktuelletiefe = 0\r\n    for i in range(6):\r\n        for u in range(6):\r\n            boardcopy = board\r\n            print(boardcopy)\r\n            if boardcopy[i][u] == \" \":\r\n\r\n                boardcopy[i][u] = \"O\"\r\n\r\n                #wenn die KI Gewinnt dann ist die wertung 1\r\n                if checkwinloosdraw(boardcopy) == \"O\":\r\n                    wertung[i][u] = 1\r\n                #wenn die Spieler Gewinnt ist die Wertung -1\r\n                if checkwinloosdraw(boardcopy) == \"X\":\r\n                    wertung[i][u] = -1\r\n                # wenn niemand gewonnen hat ist wird erneut der min max ausgeführt wenn die tiefe noch nicht erreicht ist\r\n                if checkwinloosdraw(boardcopy) != \"X\" and checkwinloosdraw(boardcopy) != \"O\":\r\n                    if tiefe != aktuelletiefe:\r\n                        wertung[i][u] = minimax(boardcopy,tiefe)\r\n                    aktuelletiefe = aktuelletiefe + 1\r\n\r\n    return [0,0]\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Backend/Tictactow_Algorytmus.py b/Backend/Tictactow_Algorytmus.py
+--- a/Backend/Tictactow_Algorytmus.py	(revision 75e6771590fc7cfdfbcebc5e2b5fb07ff4f67d16)
++++ b/Backend/Tictactow_Algorytmus.py	(date 1681891692680)
+@@ -2,7 +2,7 @@
+ def checkwinloosdraw(board):
+     for i in range(6):
+         for q in range(2):
+-            if board[i][0 + q] == board[i][1 + q] == board[i][2 + q] == board[i][3 + q] != " "
++            if board[i][0 + q] == board[i][1 + q] == board[i][2 + q] == board[i][3 + q] != " ":
+                 return board[i][0 + q]
+ 
+             if board[0 + q][i] == board[1 + q][i] == board[2 + q][i] == board[3 + q][i] != " ":
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.11\" project-jdk-type=\"Python SDK\" />\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 75e6771590fc7cfdfbcebc5e2b5fb07ff4f67d16)
++++ b/.idea/misc.xml	(date 1681891740907)
+@@ -1,4 +1,4 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (devshhbk)" project-jdk-type="Python SDK" />
+ </project>
+\ No newline at end of file
+Index: .idea/devshhbk.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module type=\"PYTHON_MODULE\" version=\"4\">\r\n  <component name=\"NewModuleRootManager\">\r\n    <content url=\"file://$MODULE_DIR$\" />\r\n    <orderEntry type=\"inheritedJdk\" />\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n  </component>\r\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/devshhbk.iml b/.idea/devshhbk.iml
+--- a/.idea/devshhbk.iml	(revision 75e6771590fc7cfdfbcebc5e2b5fb07ff4f67d16)
++++ b/.idea/devshhbk.iml	(date 1681891740886)
+@@ -1,7 +1,9 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <module type="PYTHON_MODULE" version="4">
+   <component name="NewModuleRootManager">
+-    <content url="file://$MODULE_DIR$" />
++    <content url="file://$MODULE_DIR$">
++      <excludeFolder url="file://$MODULE_DIR$/venv" />
++    </content>
+     <orderEntry type="inheritedJdk" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"f2baf0e4-a2ae-4c29-8316-e85e5ad6a870\" name=\"Changes\" comment=\"rechtschreibkorrektur\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/DB/__init__.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/DB/__init__.py\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Python Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"master\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2NSWYP72UQRzYksz8mSWK3a8qip\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/recin/Documents/GitHub/devshhbk&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\recin\\Documents\\GitHub\\devshhbk\\Backend\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Python.__init__\">\r\n    <configuration name=\"Tic_Tac_Toe_Spiel\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"devshhbk\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/Backend\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/Backend/Tic_Tac_Toe_Spiel.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"__init__\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"devshhbk\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/DB\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/DB/__init__.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" nameIsGenerated=\"true\">\r\n      <module name=\"devshhbk\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/main.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Python.__init__\" />\r\n        <item itemvalue=\"Python.Tic_Tac_Toe_Spiel\" />\r\n        <item itemvalue=\"Python.Tic_Tac_Toe_Spiel\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"f2baf0e4-a2ae-4c29-8316-e85e5ad6a870\" name=\"Changes\" comment=\"\" />\r\n      <created>1679658011105</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1679658011105</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"keine ahnung\">\r\n      <created>1680169680304</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1680169680304</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"verschiebung code bauernschach\">\r\n      <created>1680169719176</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1680169719176</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"3\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"keine ahnung\" />\r\n    <MESSAGE value=\"verschiebung code bauernschach\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"verschiebung code bauernschach\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 75e6771590fc7cfdfbcebc5e2b5fb07ff4f67d16)
++++ b/.idea/workspace.xml	(date 1681891768493)
+@@ -1,9 +1,11 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="AutoImportSettings">
++    <option name="autoReloadType" value="SELECTIVE" />
++  </component>
+   <component name="ChangeListManager">
+     <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="rechtschreibkorrektur">
+-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/DB/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/DB/__init__.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/Backend/Tictactow_Algorytmus.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/Tictactow_Algorytmus.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -46,7 +48,7 @@
+       <recent name="C:\Users\recin\Documents\GitHub\devshhbk\Backend" />
+     </key>
+   </component>
+-  <component name="RunManager" selected="Python.__init__">
++  <component name="RunManager" selected="Python.Tic_Tac_Toe_Spiel">
+     <configuration name="Tic_Tac_Toe_Spiel" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+       <module name="devshhbk" />
+       <option name="INTERPRETER_OPTIONS" value="" />
+@@ -54,12 +56,33 @@
+       <envs>
+         <env name="PYTHONUNBUFFERED" value="1" />
+       </envs>
++      <option name="SDK_HOME" value="C:\Users\lollo\Documents\GitHub\devshhbk\venv\Scripts\python.exe" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Backend" />
++      <option name="IS_MODULE_SDK" value="false" />
++      <option name="ADD_CONTENT_ROOTS" value="true" />
++      <option name="ADD_SOURCE_ROOTS" value="true" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Backend/Tic_Tac_Toe_Spiel.py" />
++      <option name="PARAMETERS" value="" />
++      <option name="SHOW_COMMAND_LINE" value="false" />
++      <option name="EMULATE_TERMINAL" value="false" />
++      <option name="MODULE_MODE" value="false" />
++      <option name="REDIRECT_INPUT" value="false" />
++      <option name="INPUT_FILE" value="" />
++      <method v="2" />
++    </configuration>
++    <configuration name="__init__ (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++      <module name="devshhbk" />
++      <option name="INTERPRETER_OPTIONS" value="" />
++      <option name="PARENT_ENVS" value="true" />
++      <envs>
++        <env name="PYTHONUNBUFFERED" value="1" />
++      </envs>
+       <option name="SDK_HOME" value="" />
+-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Backend" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Frontend" />
+       <option name="IS_MODULE_SDK" value="true" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
+-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Backend/Tic_Tac_Toe_Spiel.py" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Frontend/__init__.py" />
+       <option name="PARAMETERS" value="" />
+       <option name="SHOW_COMMAND_LINE" value="false" />
+       <option name="EMULATE_TERMINAL" value="false" />
+@@ -112,8 +135,9 @@
+     </configuration>
+     <recent_temporary>
+       <list>
+-        <item itemvalue="Python.__init__" />
+         <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
++        <item itemvalue="Python.__init__ (1)" />
++        <item itemvalue="Python.__init__" />
+         <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
+       </list>
+     </recent_temporary>

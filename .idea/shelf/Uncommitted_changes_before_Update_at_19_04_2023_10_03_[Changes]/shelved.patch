@@ -1,0 +1,364 @@
+Index: Frontend/__init__.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pygame, sys\r\nfrom classes.button import Button\r\n\r\n\r\npygame.init()\r\n\r\nclass Pawn:\r\n    def __init__(self, color, x, y):\r\n        self.color = color\r\n        self.x = x\r\n        self.y = y\r\n        self.has_moved = False  # added variable to track if pawn has moved\r\n\r\n    def draw(self, surface, selected=False):\r\n        radius = 30\r\n        if self.color == \"white\":\r\n            if selected:\r\n                color = (0, 255, 0)  # green if selected\r\n            else:\r\n                color = (255, 255, 255)\r\n        else:\r\n            if selected:\r\n                color = (0, 255, 0)  # green if selected\r\n            else:\r\n                color = (0, 0, 0)\r\n        pygame.draw.circle(surface, color, (self.x * 80 + 40, self.y * 80 + 40), radius)\r\n\r\n    def move(self, x, y, selected=False):\r\n        # move the piece if the destination is valid\r\n        if self.color == \"white\" and y == self.y - 1:\r\n            self.x = x\r\n            self.y = y\r\n            self.has_moved = True  # update has_moved after move\r\n        elif self.color == \"black\" and y == self.y + 1:\r\n            self.x = x\r\n            self.y = y\r\n            self.has_moved = True  # update has_moved after move\r\n        self.draw(board, selected=selected)  # draw the pawn with the selected flag\r\n\r\n#defining font size and get font element\r\ndef font(size): \r\n    return pygame.font.Font(\"resources/mainFont.ttf\", size)\r\n    \r\n# render the board and pawns\r\ndef reRender():\r\n    board.fill((255, 206, 158))\r\n    for x in range(0, 6, 2):\r\n        for y in range(0, 6, 2):\r\n            rect1 = pygame.draw.rect(board, (210, 180, 140), (x * 80, y * 80, 80, 80))\r\n            rect2 = pygame.draw.rect(board, (210, 180, 140), ((x + 1) * 80, (y + 1) * 80, 80, 80))\r\n\r\n    for pawn in pawns:\r\n        pawn.draw(board, selected=(pawn == selected_pawn))\r\n\r\n        # add the board to the screen\r\n    screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))\r\n    pygame.display.flip()\r\n\r\n# set up the window\r\nsizeX = 520*1.7\r\nsizeY = 520*1.3\r\n\r\nsize = (sizeX, sizeY)\r\nscreen = pygame.display.set_mode(size)\r\npygame.display.set_caption(\"Chess Game\")\r\nbackgroundIMG = pygame.image.load(\"resources/hideinpain.png\")\r\nbackground = pygame.transform.scale(backgroundIMG,(sizeX, sizeY))\r\n\r\n\r\n# set up the pawns\r\npawns = []\r\nfor i in range(6):\r\n    pawns.append(Pawn(\"black\", i, 0))\r\n    pawns.append(Pawn(\"white\", i, 5))\r\nselected_pawn = None\r\n\r\n# set up the board\r\nsquares = []\r\nboard = pygame.Surface((480, 480))\r\nboard.fill((255, 206, 158))\r\nfor x in range(0, 6, 2):\r\n    for y in range(0, 6, 2):\r\n        rect1 = pygame.draw.rect(board, (210, 180, 140), (x * 80, y * 80, 80, 80))\r\n        rect2 = pygame.draw.rect(board, (210, 180, 140), ((x + 1) * 80, (y + 1) * 80, 80, 80))\r\n        squares.append(rect1)\r\n        squares.append(rect2)\r\n\r\nfor pawn in pawns:\r\n    pawn.draw(board, selected=False)  \r\n    # add the board to the screen\r\n\r\n\r\n\r\ndef mainMenu():\r\n    pygame.display.set_caption(\"Menü\")\r\n    while True:\r\n        screen.blit(background, (0, 0))\r\n\r\n        MENU_MOUSE_POS = pygame.mouse.get_pos()\r\n\r\n        MENU_TEXT = font(100).render(\"MAIN MENU\", True, \"#000000\")\r\n        MENU_RECT = MENU_TEXT.get_rect(center=(sizeX/2, 60))\r\n\r\n        playChessButton = Button(image=pygame.image.load(\"resources/test.png\"), pos=(sizeX/4, 250), \r\n                            text_input=\"SCHACH\", font=font(40), base_color=\"#d7fcd4\", hovering_color=\"Yellow\")\r\n        playToeButton = Button(image=pygame.image.load(\"resources/test.png\"), pos=((sizeX/4)*3, 250), \r\n                            text_input=\"TICTACTOE\", font=font(40), base_color=\"#d7fcd4\", hovering_color=\"Yellow\")\r\n        showRanking = Button(image=pygame.image.load(\"resources/test.png\"), pos=(sizeX/2, 400), \r\n                            text_input=\"RANKING\", font=font(40), base_color=\"#d7fcd4\", hovering_color=\"Yellow\")\r\n        quitButton = Button(image=pygame.image.load(\"resources/test.png\"), pos=(sizeX/2, 550), \r\n                            text_input=\"VERLASSEN\", font=font(40), base_color=\"#d7fcd4\", hovering_color=\"Yellow\")\r\n\r\n        screen.blit(MENU_TEXT, MENU_RECT)\r\n\r\n        for button in [playChessButton, playToeButton, showRanking, quitButton]:\r\n            button.changeColor(MENU_MOUSE_POS)\r\n            button.update(screen)\r\n        \r\n        for event in pygame.event.get():\r\n            if event.type == pygame.QUIT:\r\n                pygame.quit()\r\n                sys.exit()\r\n            if event.type == pygame.MOUSEBUTTONDOWN:\r\n                if playChessButton.checkForInput(MENU_MOUSE_POS):\r\n                    chessGame()\r\n                if playToeButton.checkForInput(MENU_MOUSE_POS):\r\n                    chessGame()\r\n                if showRanking.checkForInput(MENU_MOUSE_POS):\r\n                    showRanking()\r\n                if quitButton.checkForInput(MENU_MOUSE_POS):\r\n                    pygame.quit()\r\n                    sys.exit()\r\n\r\n        pygame.display.update()\r\n\r\n# ' geholene Datananzeigen'\r\n# def showRanking():\r\n#     pygame.display.set_caption(\"Ranking\")\r\n#     while True:\r\n#         OPTIONS_MOUSE_POS = pygame.mouse.get_pos()\r\n\r\n#         screen.fill(\"white\")\r\n\r\n#         OPTIONS_TEXT = font(45).render(\"This is the OPTIONS screen.\", True, \"Black\")\r\n#         OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))\r\n#         screen.blit(OPTIONS_TEXT, OPTIONS_RECT)\r\n\r\n#         OPTIONS_BACK = Button(image=None, pos=(640, 460), \r\n#                             text_input=\"BACK\", font=font(40), base_color=\"#d7fcd4\", hovering_color=\"Yellow\")\r\n\r\n#         OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)\r\n#         OPTIONS_BACK.update(screen)\r\n\r\n#         for event in pygame.event.get():\r\n#             if event.type == pygame.QUIT:\r\n#                 pygame.quit()\r\n#                 sys.exit()\r\n#             if event.type == pygame.MOUSEBUTTONDOWN:\r\n#                 if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):\r\n#                     mainMenu()\r\n\r\n#         pygame.display.update()\r\n\r\n\r\n    \r\ndef chessGame():\r\n    screen.fill(\"black\")\r\n    global selected_pawn\r\n    screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))\r\n    pygame.display.flip()\r\n\r\n    # the game\r\n    while True:\r\n        for event in pygame.event.get():\r\n            if event.type == pygame.QUIT:\r\n                pygame.quit()\r\n                sys.exit()\r\n\r\n            if event.type == pygame.MOUSEBUTTONDOWN:\r\n                # get the position of the click\r\n                pos = pygame.mouse.get_pos()\r\n                print(pos)\r\n                # convert the position to board coordinates\r\n                x = (pos[0] - (int)((sizeX/2)-(480/2))) // 80\r\n                y = (pos[1] - (int)((sizeY/2)-(480/2))) // 80\r\n                print(x,y)\r\n                # check if a piece has been clicked\r\n                for pawn in pawns:\r\n                    if pawn.x == x and pawn.y == y:\r\n                        selected_pawn = pawn\r\n\r\n                        print(pawn)\r\n                        break\r\n\r\n            elif event.type == pygame.MOUSEBUTTONUP and selected_pawn is not None:\r\n                # get the position of the click\r\n                pos = pygame.mouse.get_pos()\r\n\r\n                # convert the position to board coordinates\r\n                x = (pos[0] - (int)((sizeX/2)-(480/2))) // 80\r\n                y = (pos[1] - (int)((sizeY/2)-(480/2))) // 80\r\n\r\n                # move the piece if the destination is valid\r\n                if selected_pawn.color == \"white\":\r\n                    if selected_pawn.y == 5 and y == 3 and x == selected_pawn.x:\r\n                        # move 2 squares if pawn has never moved before\r\n                        selected_pawn.x = x\r\n                        selected_pawn.y = y\r\n                    elif y == selected_pawn.y - 1 and x == selected_pawn.x:\r\n                        # move 1 square\r\n                        selected_pawn.x = x\r\n                        selected_pawn.y = y\r\n\r\n                elif selected_pawn.color == \"black\":\r\n                    if selected_pawn.y == 0 and y == 2 and x == selected_pawn.x:\r\n                        # move 2 squares if pawn has never moved before\r\n                        selected_pawn.x = x\r\n                        selected_pawn.y = y\r\n                    elif y == selected_pawn.y + 1 and x == selected_pawn.x:\r\n                        # move 1 square\r\n                        selected_pawn.x = x\r\n                        selected_pawn.y = y\r\n                \r\n                reRender()\r\n\r\n\r\nmainMenu()
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Frontend/__init__.py b/Frontend/__init__.py
+--- a/Frontend/__init__.py	(revision 75e6771590fc7cfdfbcebc5e2b5fb07ff4f67d16)
++++ b/Frontend/__init__.py	(date 1681813930533)
+@@ -1,4 +1,6 @@
+ import pygame, sys
++
++from Backend.Tic_Tac_Toe_Spiel import tictactoe
+ from classes.button import Button
+ 
+ 
+@@ -124,7 +126,7 @@
+                 if playChessButton.checkForInput(MENU_MOUSE_POS):
+                     chessGame()
+                 if playToeButton.checkForInput(MENU_MOUSE_POS):
+-                    chessGame()
++                    tictactoe()
+                 if showRanking.checkForInput(MENU_MOUSE_POS):
+                     showRanking()
+                 if quitButton.checkForInput(MENU_MOUSE_POS):
+Index: Backend/Tictactow_Algorytmus.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\r\ndef checkwinloosdraw(board):\r\n    for i in range(6):\r\n        for q in range(2):\r\n            if board[i][0 + q] == board[i][1 + q] == board[i][2 + q] == board[i][3 + q] != \" \"\r\n                return board[i][0 + q]\r\n\r\n            if board[0 + q][i] == board[1 + q][i] == board[2 + q][i] == board[3 + q][i] != \" \":\r\n                return board[0 + q][i]\r\n\r\n    oliure = (0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)\r\n    for pos in oliure:\r\n        if board[pos[0]][pos[1]] == board[pos[0] + 1][pos[1] + 1] == board[pos[0] + 2][pos[1] + 2] == board[pos[0] + 3][pos[1] + 3] != \" \":\r\n            return board[pos[0]][pos[1]]\r\n\r\n    oreuli = (0, 3), (1, 3), (2, 3), (0, 4), (1, 4), (2, 4), (0, 5), (1, 5), (2, 5)\r\n    for pos in oreuli:\r\n        if board[pos[0]][pos[1]] == board[pos[0] + 1][pos[1] - 1] == board[pos[0] + 2][pos[1] - 2] == board[pos[0] + 3][pos[1] - 3] != \" \":\r\n            return board[pos[0]][pos[1]]\r\n\r\n\r\n\r\ndef Algorithmus(board):\r\n    optimalesfeld = minimax(board,5)\r\n    XXX = ((optimalesfeld[0] -1)*100)+50\r\n    YYY = ((optimalesfeld[1] -1)*100)+50\r\n    return [XXX,YYY]\r\n\r\n\r\n\r\ndef minimax(board,tiefe):\r\n\r\n    wertung = [[\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"]]\r\n\r\n    aktuelletiefe = 0\r\n    for i in range(6):\r\n        for u in range(6):\r\n            boardcopy = board\r\n            print(boardcopy)\r\n            if boardcopy[i][u] == \" \":\r\n\r\n                boardcopy[i][u] = \"O\"\r\n\r\n                #wenn die KI Gewinnt dann ist die wertung 1\r\n                if checkwinloosdraw(boardcopy) == \"O\":\r\n                    wertung[i][u] = 1\r\n                #wenn die Spieler Gewinnt ist die Wertung -1\r\n                if checkwinloosdraw(boardcopy) == \"X\":\r\n                    wertung[i][u] = -1\r\n                # wenn niemand gewonnen hat ist wird erneut der min max ausgeführt wenn die tiefe noch nicht erreicht ist\r\n                if checkwinloosdraw(boardcopy) != \"X\" and checkwinloosdraw(boardcopy) != \"O\":\r\n                    if tiefe != aktuelletiefe:\r\n                        wertung[i][u] = minimax(boardcopy,tiefe)\r\n                    aktuelletiefe = aktuelletiefe + 1\r\n\r\n    return [0,0]\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Backend/Tictactow_Algorytmus.py b/Backend/Tictactow_Algorytmus.py
+--- a/Backend/Tictactow_Algorytmus.py	(revision 75e6771590fc7cfdfbcebc5e2b5fb07ff4f67d16)
++++ b/Backend/Tictactow_Algorytmus.py	(date 1681813076297)
+@@ -2,7 +2,7 @@
+ def checkwinloosdraw(board):
+     for i in range(6):
+         for q in range(2):
+-            if board[i][0 + q] == board[i][1 + q] == board[i][2 + q] == board[i][3 + q] != " "
++            if board[i][0 + q] == board[i][1 + q] == board[i][2 + q] == board[i][3 + q] != " ":
+                 return board[i][0 + q]
+ 
+             if board[0 + q][i] == board[1 + q][i] == board[2 + q][i] == board[3 + q][i] != " ":
+Index: Backend/Tic_Tac_Toe_Spiel.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import pygame\r\nfrom Tictactow_Algorytmus import Algorithmus\r\n# Initialisiere Pygame\r\npygame.init()\r\n\r\n# Display wird erstellt\r\nWIDTH, HEIGHT = 600, 600\r\nscreen = pygame.display.set_mode((WIDTH, HEIGHT))\r\npygame.display.set_caption(\"Tic Tac Toe\")\r\nclock = pygame.time.Clock()\r\n# Initialisiert die Farben\r\nBLACK = (0, 0, 0)\r\nWHITE = (255, 255, 255)\r\n\r\n# Setzt die Spielfelder\r\nboard = [[\" \", \" \", \" \", \" \", \" \", \" \"],\r\n         [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n         [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n         [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n         [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n         [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n         [\" \", \" \", \" \", \" \", \" \", \" \"]]\r\n\r\n\r\ndef draw_window():\r\n    #Füllt den Bildschirm weiß aus\r\n    screen.fill(WHITE)\r\n\r\n    #Malt die Linien ins Spielfeld\r\n    drawBoard()\r\n\r\n    #Setzt Marker\r\n\r\n    #Updated das Spielfeld\r\n    pygame.display.update()\r\n\r\ndef drawBoard():\r\n    for line in range(1, 6):\r\n        # Vertikale Linien\r\n        pygame.draw.line(screen, BLACK, (line * WIDTH / 6, 0), (line * WIDTH / 6, HEIGHT), 3)\r\n        # Horizontale Linien\r\n        pygame.draw.line(screen, BLACK, (0, line * HEIGHT / 6), (WIDTH, line * HEIGHT / 6), 3)\r\n\r\ndef drawcircle(circleX,circleY):\r\n    pygame.draw.circle(screen, (0, 0, 0), (circleX, circleY), 20)\r\ndef drawx(xX1,xY1,xX2,xY2):\r\n    pygame.draw.line(screen, (0, 0, 0), xX1, xY1, 10)\r\n    pygame.draw.line(screen, (0, 0, 0), xX2, xY2, 10)\r\n\r\ndef checkwinloosdraw():\r\n    for i in range(6):\r\n        for q in range(2):\r\n            if board[i][0+q] == board[i][1+q] == board[i][2+q] == board [i][3+q] != \" \":\r\n                print (f\" {board[i][0+q]} hat gewonnen\")\r\n\r\n                return board[i][0+q]\r\n            if board[0+q][i] == board[1+q][i] == board[2+q][i] == board[3+q][i] != \" \":\r\n                print (f\" {board [0+q] [i]} hat gewonnen\")\r\n                return board [0+q] [i]\r\n    oliure = (0,0),(0,1),(0,2),(1,0),(1,1),(1,2),(2,0),(2,1),(2,2)\r\n    for pos in oliure:\r\n        if board[pos[0]][pos[1]] == board [pos[0]+1] [pos [1]+1] == board [pos[0]+2] [pos[1]+2] == board [pos[0]+3] [pos[1]+3] != \" \":\r\n            print(f\" {board [pos[0]] [pos [1]]} hat gewonnen\")\r\n            return board [pos[0]] [pos [1]]\r\n    oreuli = (0,3),(1,3),(2,3),(0,4),(1,4),(2,4),(0,5),(1,5),(2,5)\r\n    for pos in oreuli:\r\n        if board [pos[0]][pos[1]] == board [pos[0]+1] [pos[1]-1] == board [pos[0]+2] [pos[1]-2] == board [pos[0]+3] [pos [1]-3] != \" \":\r\n            print (f\" {board [pos[0]] [pos[1]]} hat gewonnen\")\r\n            return board [pos[0]] [pos[1]]\r\n\r\n\r\n\r\n\r\n#boolean wer wer an der rheie ist true ist X und flase ist O\r\nspieler = False\r\ndraw_window()\r\n# Game loop\r\nrun = True\r\ngamevorbei = False\r\n\r\nwhile run:\r\n    for event in pygame.event.get():\r\n        #Event zum Schließen vom fenster\r\n        if event.type == pygame.QUIT:\r\n            run = False\r\n        #if spieler == True:\r\n        #    XYALGO = Algorithmus(board)\r\n        #    print(XYALGO)\r\n        #    drawcircle(XYALGO[0],XYALGO[1])\r\n        #    spieler = False\r\n        #    pygame.display.update()\r\n\r\n        #if spieler == False:\r\n        if event.type == pygame.MOUSEBUTTONUP:\r\n            pos = pygame.mouse.get_pos()\r\n            #Prüfen ob der mouse klick sich im feld befindet und ob das board an der stelle noch leer ist dann den spieler rein zeichenen\r\n            ## die horizontalen und vertikalen dinger sind die pixel welche mit den schleifen immer um 100 (einfeld) erhöht werden\r\n            horizontalhunderter = 0\r\n            horizontalfuenfundzwanziger = 25\r\n            horizontalfuenfziger = 50\r\n            horizontalfuenfundsiebziger = 75\r\n            #schleife durch die horizontalen rheien\r\n            for t in range(6):\r\n                diagonalhunderter = 0\r\n                diagonalfuenundzwanziger = 25\r\n                diagonalfuenfziger = 50\r\n                diagonalfuenfundsiebziger = 75\r\n                #diese schleife geht die diagonalen rheien durch\r\n                for i in range(6):\r\n                    if pos[0] >= diagonalhunderter and pos[0] <= diagonalhunderter+100 and pos[1] >= horizontalhunderter and pos[1] <= horizontalhunderter+100 and board[t][i] == \" \" and gamevorbei == False:\r\n                        if spieler == True:\r\n                            drawcircle(diagonalfuenfziger, horizontalfuenfziger)\r\n                            board[t][i] = \"O\"\r\n                            spieler = False\r\n                        elif spieler == False:\r\n                            drawx((diagonalfuenundzwanziger, horizontalfuenfundzwanziger), (diagonalfuenfundsiebziger, horizontalfuenfundsiebziger), (diagonalfuenundzwanziger, horizontalfuenfundsiebziger), (diagonalfuenfundsiebziger, horizontalfuenfundzwanziger))\r\n                            board[t][i] = \"X\"\r\n                            spieler = True\r\n                    diagonalhunderter = diagonalhunderter + 100\r\n                    diagonalfuenfziger = diagonalfuenfziger + 100\r\n                    diagonalfuenundzwanziger = diagonalfuenundzwanziger + 100\r\n                    diagonalfuenfundsiebziger = diagonalfuenfundsiebziger + 100\r\n                horizontalhunderter = horizontalhunderter +100\r\n                horizontalfuenfundzwanziger = horizontalfuenfundzwanziger +100\r\n                horizontalfuenfziger = horizontalfuenfziger +100\r\n                horizontalfuenfundsiebziger = horizontalfuenfundsiebziger+100\r\n\r\n                #checken ob jemand gewonnen hat und dann das spiel deaktivieren aber nicht schließen\r\n                if gamevorbei == False:\r\n                    if checkwinloosdraw() == \"X\" or checkwinloosdraw() == \"O\":\r\n                        gamevorbei = True\r\n\r\n                pygame.display.update()\r\n# Quit Pygame\r\npygame.quit()
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Backend/Tic_Tac_Toe_Spiel.py b/Backend/Tic_Tac_Toe_Spiel.py
+--- a/Backend/Tic_Tac_Toe_Spiel.py	(revision 75e6771590fc7cfdfbcebc5e2b5fb07ff4f67d16)
++++ b/Backend/Tic_Tac_Toe_Spiel.py	(date 1681814030950)
+@@ -1,5 +1,5 @@
+ import pygame
+-from Tictactow_Algorytmus import Algorithmus
++
+ # Initialisiere Pygame
+ pygame.init()
+ 
+@@ -69,67 +69,68 @@
+             return board [pos[0]] [pos[1]]
+ 
+ 
+-
++def tictactoe():
+ 
+-#boolean wer wer an der rheie ist true ist X und flase ist O
+-spieler = False
+-draw_window()
+-# Game loop
+-run = True
+-gamevorbei = False
++    #boolean wer wer an der rheie ist true ist X und flase ist O
++    spieler = False
++    draw_window()
++    # Game loop
++    run = True
++    gamevorbei = False
+ 
+-while run:
+-    for event in pygame.event.get():
+-        #Event zum Schließen vom fenster
+-        if event.type == pygame.QUIT:
+-            run = False
+-        #if spieler == True:
+-        #    XYALGO = Algorithmus(board)
+-        #    print(XYALGO)
+-        #    drawcircle(XYALGO[0],XYALGO[1])
+-        #    spieler = False
+-        #    pygame.display.update()
++    while run:
++        for event in pygame.event.get():
++            #Event zum Schließen vom fenster
++            if event.type == pygame.QUIT:
++                run = False
++            #if spieler == True:
++            #    XYALGO = Algorithmus(board)
++            #    print(XYALGO)
++            #    drawcircle(XYALGO[0],XYALGO[1])
++            #    spieler = False
++            #    pygame.display.update()
+ 
+-        #if spieler == False:
+-        if event.type == pygame.MOUSEBUTTONUP:
+-            pos = pygame.mouse.get_pos()
+-            #Prüfen ob der mouse klick sich im feld befindet und ob das board an der stelle noch leer ist dann den spieler rein zeichenen
+-            ## die horizontalen und vertikalen dinger sind die pixel welche mit den schleifen immer um 100 (einfeld) erhöht werden
+-            horizontalhunderter = 0
+-            horizontalfuenfundzwanziger = 25
+-            horizontalfuenfziger = 50
+-            horizontalfuenfundsiebziger = 75
+-            #schleife durch die horizontalen rheien
+-            for t in range(6):
+-                diagonalhunderter = 0
+-                diagonalfuenundzwanziger = 25
+-                diagonalfuenfziger = 50
+-                diagonalfuenfundsiebziger = 75
+-                #diese schleife geht die diagonalen rheien durch
+-                for i in range(6):
+-                    if pos[0] >= diagonalhunderter and pos[0] <= diagonalhunderter+100 and pos[1] >= horizontalhunderter and pos[1] <= horizontalhunderter+100 and board[t][i] == " " and gamevorbei == False:
+-                        if spieler == True:
+-                            drawcircle(diagonalfuenfziger, horizontalfuenfziger)
+-                            board[t][i] = "O"
+-                            spieler = False
+-                        elif spieler == False:
+-                            drawx((diagonalfuenundzwanziger, horizontalfuenfundzwanziger), (diagonalfuenfundsiebziger, horizontalfuenfundsiebziger), (diagonalfuenundzwanziger, horizontalfuenfundsiebziger), (diagonalfuenfundsiebziger, horizontalfuenfundzwanziger))
+-                            board[t][i] = "X"
+-                            spieler = True
+-                    diagonalhunderter = diagonalhunderter + 100
+-                    diagonalfuenfziger = diagonalfuenfziger + 100
+-                    diagonalfuenundzwanziger = diagonalfuenundzwanziger + 100
+-                    diagonalfuenfundsiebziger = diagonalfuenfundsiebziger + 100
+-                horizontalhunderter = horizontalhunderter +100
+-                horizontalfuenfundzwanziger = horizontalfuenfundzwanziger +100
+-                horizontalfuenfziger = horizontalfuenfziger +100
+-                horizontalfuenfundsiebziger = horizontalfuenfundsiebziger+100
++            #if spieler == False:
++            if event.type == pygame.MOUSEBUTTONUP:
++                pos = pygame.mouse.get_pos()
++                #Prüfen ob der mouse klick sich im feld befindet und ob das board an der stelle noch leer ist dann den spieler rein zeichenen
++                ## die horizontalen und vertikalen dinger sind die pixel welche mit den schleifen immer um 100 (einfeld) erhöht werden
++                horizontalhunderter = 0
++                horizontalfuenfundzwanziger = 25
++                horizontalfuenfziger = 50
++                horizontalfuenfundsiebziger = 75
++                #schleife durch die horizontalen rheien
++                for t in range(6):
++                    diagonalhunderter = 0
++                    diagonalfuenundzwanziger = 25
++                    diagonalfuenfziger = 50
++                    diagonalfuenfundsiebziger = 75
++                    #diese schleife geht die diagonalen rheien durch
++                    for i in range(6):
++                        if pos[0] >= diagonalhunderter and pos[0] <= diagonalhunderter+100 and pos[1] >= horizontalhunderter and pos[1] <= horizontalhunderter+100 and board[t][i] == " " and gamevorbei == False:
++                            if spieler == True:
++                                drawcircle(diagonalfuenfziger, horizontalfuenfziger)
++                                board[t][i] = "O"
++                                spieler = False
++                            elif spieler == False:
++                                drawx((diagonalfuenundzwanziger, horizontalfuenfundzwanziger), (diagonalfuenfundsiebziger, horizontalfuenfundsiebziger), (diagonalfuenundzwanziger, horizontalfuenfundsiebziger), (diagonalfuenfundsiebziger, horizontalfuenfundzwanziger))
++                                board[t][i] = "X"
++                                spieler = True
++                        diagonalhunderter = diagonalhunderter + 100
++                        diagonalfuenfziger = diagonalfuenfziger + 100
++                        diagonalfuenundzwanziger = diagonalfuenundzwanziger + 100
++                        diagonalfuenfundsiebziger = diagonalfuenfundsiebziger + 100
++                    horizontalhunderter = horizontalhunderter +100
++                    horizontalfuenfundzwanziger = horizontalfuenfundzwanziger +100
++                    horizontalfuenfziger = horizontalfuenfziger +100
++                    horizontalfuenfundsiebziger = horizontalfuenfundsiebziger+100
+ 
+-                #checken ob jemand gewonnen hat und dann das spiel deaktivieren aber nicht schließen
+-                if gamevorbei == False:
+-                    if checkwinloosdraw() == "X" or checkwinloosdraw() == "O":
+-                        gamevorbei = True
++                    #checken ob jemand gewonnen hat und dann das spiel deaktivieren aber nicht schließen
++                    if gamevorbei == False:
++                        if checkwinloosdraw() == "X" or checkwinloosdraw() == "O":
++                            gamevorbei = True
+ 
+-                pygame.display.update()
+-# Quit Pygame
+-pygame.quit()
+\ No newline at end of file
++                    pygame.display.update()
++    # Quit Pygame
++tictactoe()
++pygame.quit()
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.11\" project-jdk-type=\"Python SDK\" />\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 75e6771590fc7cfdfbcebc5e2b5fb07ff4f67d16)
++++ b/.idea/misc.xml	(date 1681812909914)
+@@ -1,4 +1,4 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (devshhbk)" project-jdk-type="Python SDK" />
+ </project>
+\ No newline at end of file
+Index: .idea/devshhbk.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module type=\"PYTHON_MODULE\" version=\"4\">\r\n  <component name=\"NewModuleRootManager\">\r\n    <content url=\"file://$MODULE_DIR$\" />\r\n    <orderEntry type=\"inheritedJdk\" />\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n  </component>\r\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/devshhbk.iml b/.idea/devshhbk.iml
+--- a/.idea/devshhbk.iml	(revision 75e6771590fc7cfdfbcebc5e2b5fb07ff4f67d16)
++++ b/.idea/devshhbk.iml	(date 1681812909883)
+@@ -1,7 +1,9 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <module type="PYTHON_MODULE" version="4">
+   <component name="NewModuleRootManager">
+-    <content url="file://$MODULE_DIR$" />
++    <content url="file://$MODULE_DIR$">
++      <excludeFolder url="file://$MODULE_DIR$/venv" />
++    </content>
+     <orderEntry type="inheritedJdk" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"f2baf0e4-a2ae-4c29-8316-e85e5ad6a870\" name=\"Changes\" comment=\"rechtschreibkorrektur\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/DB/__init__.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/DB/__init__.py\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Python Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"master\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2NSWYP72UQRzYksz8mSWK3a8qip\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/recin/Documents/GitHub/devshhbk&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\recin\\Documents\\GitHub\\devshhbk\\Backend\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Python.__init__\">\r\n    <configuration name=\"Tic_Tac_Toe_Spiel\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"devshhbk\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/Backend\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/Backend/Tic_Tac_Toe_Spiel.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"__init__\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"devshhbk\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/DB\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/DB/__init__.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" nameIsGenerated=\"true\">\r\n      <module name=\"devshhbk\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/main.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Python.__init__\" />\r\n        <item itemvalue=\"Python.Tic_Tac_Toe_Spiel\" />\r\n        <item itemvalue=\"Python.Tic_Tac_Toe_Spiel\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"f2baf0e4-a2ae-4c29-8316-e85e5ad6a870\" name=\"Changes\" comment=\"\" />\r\n      <created>1679658011105</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1679658011105</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"keine ahnung\">\r\n      <created>1680169680304</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1680169680304</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"verschiebung code bauernschach\">\r\n      <created>1680169719176</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1680169719176</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"3\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"keine ahnung\" />\r\n    <MESSAGE value=\"verschiebung code bauernschach\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"verschiebung code bauernschach\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 75e6771590fc7cfdfbcebc5e2b5fb07ff4f67d16)
++++ b/.idea/workspace.xml	(date 1681820227923)
+@@ -1,9 +1,17 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="AutoImportSettings">
++    <option name="autoReloadType" value="SELECTIVE" />
++  </component>
+   <component name="ChangeListManager">
+     <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="rechtschreibkorrektur">
++      <change beforePath="$PROJECT_DIR$/.idea/devshhbk.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/devshhbk.iml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_31_03_2023_11_47__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_31_03_2023_11_47__Changes_.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/DB/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/DB/__init__.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/Backend/Tic_Tac_Toe_Spiel.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/Tic_Tac_Toe_Spiel.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/Backend/Tictactow_Algorytmus.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/Tictactow_Algorytmus.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/Frontend/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/__init__.py" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -46,7 +54,28 @@
+       <recent name="C:\Users\recin\Documents\GitHub\devshhbk\Backend" />
+     </key>
+   </component>
+-  <component name="RunManager" selected="Python.__init__">
++  <component name="RunManager" selected="Python.Tic_Tac_Toe_Spiel">
++    <configuration name="Bauernschach_Spiel" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++      <module name="devshhbk" />
++      <option name="INTERPRETER_OPTIONS" value="" />
++      <option name="PARENT_ENVS" value="true" />
++      <envs>
++        <env name="PYTHONUNBUFFERED" value="1" />
++      </envs>
++      <option name="SDK_HOME" value="" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Backend" />
++      <option name="IS_MODULE_SDK" value="true" />
++      <option name="ADD_CONTENT_ROOTS" value="true" />
++      <option name="ADD_SOURCE_ROOTS" value="true" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Backend/Bauernschach_Spiel.py" />
++      <option name="PARAMETERS" value="" />
++      <option name="SHOW_COMMAND_LINE" value="false" />
++      <option name="EMULATE_TERMINAL" value="false" />
++      <option name="MODULE_MODE" value="false" />
++      <option name="REDIRECT_INPUT" value="false" />
++      <option name="INPUT_FILE" value="" />
++      <method v="2" />
++    </configuration>
+     <configuration name="Tic_Tac_Toe_Spiel" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+       <module name="devshhbk" />
+       <option name="INTERPRETER_OPTIONS" value="" />
+@@ -68,7 +97,7 @@
+       <option name="INPUT_FILE" value="" />
+       <method v="2" />
+     </configuration>
+-    <configuration name="__init__" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++    <configuration name="__init__ (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+       <module name="devshhbk" />
+       <option name="INTERPRETER_OPTIONS" value="" />
+       <option name="PARENT_ENVS" value="true" />
+@@ -76,8 +105,29 @@
+         <env name="PYTHONUNBUFFERED" value="1" />
+       </envs>
+       <option name="SDK_HOME" value="" />
+-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/DB" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Frontend" />
+       <option name="IS_MODULE_SDK" value="true" />
++      <option name="ADD_CONTENT_ROOTS" value="true" />
++      <option name="ADD_SOURCE_ROOTS" value="true" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Frontend/__init__.py" />
++      <option name="PARAMETERS" value="" />
++      <option name="SHOW_COMMAND_LINE" value="false" />
++      <option name="EMULATE_TERMINAL" value="false" />
++      <option name="MODULE_MODE" value="false" />
++      <option name="REDIRECT_INPUT" value="false" />
++      <option name="INPUT_FILE" value="" />
++      <method v="2" />
++    </configuration>
++    <configuration name="__init__" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++      <module name="devshhbk" />
++      <option name="INTERPRETER_OPTIONS" value="" />
++      <option name="PARENT_ENVS" value="true" />
++      <envs>
++        <env name="PYTHONUNBUFFERED" value="1" />
++      </envs>
++      <option name="SDK_HOME" value="C:\Users\lollo\Documents\GitHub\devshhbk\venv\Scripts\python.exe" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/DB" />
++      <option name="IS_MODULE_SDK" value="false" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
+       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/DB/__init__.py" />
+@@ -112,9 +162,11 @@
+     </configuration>
+     <recent_temporary>
+       <list>
++        <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
++        <item itemvalue="Python.__init__ (1)" />
++        <item itemvalue="Python.Bauernschach_Spiel" />
+         <item itemvalue="Python.__init__" />
+-        <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
+-        <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
++        <item itemvalue="Python.__init__ (1)" />
+       </list>
+     </recent_temporary>
+   </component>
+@@ -160,4 +212,20 @@
+     <MESSAGE value="verschiebung code bauernschach" />
+     <option name="LAST_COMMIT_MESSAGE" value="verschiebung code bauernschach" />
+   </component>
++  <component name="XDebuggerManager">
++    <breakpoint-manager>
++      <breakpoints>
++        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
++          <url>file://$PROJECT_DIR$/Frontend/__init__.py</url>
++          <line>76</line>
++          <option name="timeStamp" value="3" />
++        </line-breakpoint>
++        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
++          <url>file://$PROJECT_DIR$/Frontend/__init__.py</url>
++          <line>80</line>
++          <option name="timeStamp" value="4" />
++        </line-breakpoint>
++      </breakpoints>
++    </breakpoint-manager>
++  </component>
+ </project>
+\ No newline at end of file
