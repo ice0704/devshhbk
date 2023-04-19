@@ -4,6 +4,10 @@ from anytree import Node, RenderTree
 import pygame
 import sys
 
+import pygame_gui
+
+
+
 pygame.init()
 
 class Position:
@@ -113,14 +117,21 @@ def minimax(position, depth, alpha, beta, maximizing_player):
 def chessGame(sizeX,sizeY,screen, userName, difficulty):
     global selected_pawn, beaten_pawn, pawn_to_beat, last_pos
 
+    clock = pygame.time.Clock()
+    UI_REFRESH_RATE = clock.tick(60)/1000
+
     current_turn = "white"
     run = True
     last_pos = None
+    manager = pygame_gui.UIManager((sizeX, sizeY))
 
     screen.fill("black")
     global selected_pawn
     screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))
     pygame.display.flip()
+
+    helpButton = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(((sizeX/1.2)-20, sizeY/1.12), (sizeX/6, 50)), text = "BACK",  manager=manager,
+                                            object_id='#helpButton')
 
     # the game
     while run is True:
@@ -128,13 +139,17 @@ def chessGame(sizeX,sizeY,screen, userName, difficulty):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+            if(event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_object_id == '#helpButton'):
+                print("hi")
+                
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Speichert die Position des Mouseklicks in der Variable pos
                 pos = pygame.mouse.get_pos()
 
                 # Konvertiert die Positionen in Boardkoordinaten
-                x = (pos[0] - 20) // 80
-                y = (pos[1] - 20) // 80
+                x = (pos[0] - (int)((sizeX/2)-(480/2))) // 80
+                y = (pos[1] - (int)((sizeY/2)-(480/2))) // 80
 
                 if selected_pawn is None or (selected_pawn is not None and selected_pawn.color is not current_turn):
                     # Prüft, ob ein Bauer angeklickt wurde
@@ -160,8 +175,8 @@ def chessGame(sizeX,sizeY,screen, userName, difficulty):
                 pos = pygame.mouse.get_pos()
 
                 # Konvertiert die Positionen in Boardkoordinaten
-                x = (pos[0] - 20) // 80
-                y = (pos[1] - 20) // 80
+                x = (pos[0] - (int)((sizeX/2)-(480/2))) // 80
+                y = (pos[1] - (int)((sizeY/2)-(480/2))) // 80
 
                 for pawn in pawns:
                     beaten_pawn = False
@@ -220,3 +235,7 @@ def chessGame(sizeX,sizeY,screen, userName, difficulty):
                     run = False
                     print("Schwarz hat gewonnen")
                 reRender(sizeX, sizeY, screen)
+
+                manager.process_events(event)
+        
+            manager.update(UI_REFRESH_RATE)

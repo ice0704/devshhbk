@@ -59,7 +59,7 @@ def mainMenu(sizeX,sizeY, screen, userName):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if playChessButton.checkForInput(MENU_MOUSE_POS):
-                    difficulty(sizeX, sizeY, screen, userName, "chess")
+                    chessGame(sizeX, sizeY, screen, "no", 1)
                 if playToeButton.checkForInput(MENU_MOUSE_POS):
                     chessGame()
                 if showRanking.checkForInput(MENU_MOUSE_POS):
