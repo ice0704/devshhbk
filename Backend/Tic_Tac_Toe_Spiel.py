@@ -144,17 +144,19 @@ def ttt(userName, difficulty):
 
                         #checken ob jemand gewonnen hat und dann das spiel deaktivieren aber nicht schließen
                         if gamevorbei == False:
-                            if checkwinloosdraw() == "X" or checkwinloosdraw() == "O":
-                                if checkwinloosdraw() == "X":
-                                    postFinishedTttQuery(unique_ID, userName, 12, difficulty, 1)
-                                    run == False
-                                elif checkwinloosdraw() == "O":
-                                    postFinishedTttQuery(unique_ID, userName, 12, difficulty, 0)
-                                    run == False
-                                else:
-                                    postFinishedTttQuery(unique_ID, userName, 12, difficulty, None)
-                                    run == False
-                            gamevorbei = True
+                            if checkwinloosdraw() == "X":
+                                gamevorbei == True
+                                postFinishedTttQuery(unique_ID, userName, 12, difficulty, 1)
+                                run == False
+                            elif checkwinloosdraw() == "O":
+                                gamevorbei == True
+                                postFinishedTttQuery(unique_ID, userName, 11, difficulty, 0)
+                                run == False
+                            else:
+                                gamevorbei == True
+                                postFinishedTttQuery(unique_ID, userName, 11, difficulty, 0)
+                                run == False
+                                    
                         pygame.display.update()
     # Quit Pygame
     pygame.quit()

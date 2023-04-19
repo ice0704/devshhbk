@@ -2,7 +2,7 @@ import sqlite3
 
 def postFinishedChessQuery(gameId, userName, turns, difficulty, result):
     try:    
-        connection = sqlite3.connect("../DB/StrategiespieleDB.db") 
+        connection = sqlite3.connect("StrategiespieleDB.db") 
         cursor = connection.cursor()
         print("Succesfully Connected")
 
@@ -27,7 +27,7 @@ def postFinishedChessQuery(gameId, userName, turns, difficulty, result):
 
 def postFinishedTttQuery(gameId, userName, turns, difficulty, result):
     try:    
-        connection = sqlite3.connect("../DB/StrategiespieleDB.db") 
+        connection = sqlite3.connect("StrategiespieleDB.db") 
         cursor = connection.cursor()
         print("Succesfully Connected")
 

@@ -3,7 +3,7 @@ import sqlite3
 
 def insertChessGameIntoTable(gameId, userId, turns, level, won, lost):
     try:
-        connection = sqlite3.connect("../DB/StrategiespieleDB.db") 
+        connection = sqlite3.connect("StrategiespieleDB.db") 
         cursor = connection.cursor()
         print("Succesfully Connected")
 
@@ -28,7 +28,7 @@ def insertChessGameIntoTable(gameId, userId, turns, level, won, lost):
 
 def insertTttGameIntoTable(gameId, userId, turns, level, won, lost):
     try:
-        connection = sqlite3.connect("../DB/StrategiespieleDB.db") 
+        connection = sqlite3.connect("StrategiespieleDB.db") 
         cursor = connection.cursor()
         print("Succesfully Connected")
 

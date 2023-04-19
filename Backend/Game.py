@@ -4,11 +4,12 @@ from Bauernschach_Spiel import *
 from difficulty import *
 from queries.getAllsorted import getAllSortedByTurns
 from queries.createUser import *
+from DB.__init__ import createDatabase
 
 
 
 pygame.init()
-
+createDatabase()
 #defining font size and get font element
 def font(size): 
     return pygame.font.Font("resources/mainFont.ttf", size)
@@ -31,6 +32,7 @@ manager = pygame_gui.UIManager((sizeX, sizeY))
 
 
 def mainMenu(sizeX,sizeY, screen, userName):
+
     pygame.display.set_caption("Menü")
 
     while True:
@@ -104,6 +106,8 @@ def showRankingF():
                     mainMenu()
 
         pygame.display.update()
+
+
 
 def startPage(sizeX, sizeY, screen):
     pygame.display.set_caption("Welcome")

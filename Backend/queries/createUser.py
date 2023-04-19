@@ -2,7 +2,7 @@ import sqlite3
 
 def createUserQuery(userName):
     try:
-        connection = sqlite3.connect("../DB/StrategiespieleDB.db") 
+        connection = sqlite3.connect("StrategiespieleDB.db") 
         cursor = connection.cursor()
 
         print("Succesfully Connected")
@@ -27,7 +27,7 @@ def createUserQuery(userName):
 
 def checkingExistingUser(userName):
     try:
-        connection = sqlite3.connect("../DB/StrategiespieleDB.db") 
+        connection = sqlite3.connect("StrategiespieleDB.db") 
         cursor = connection.cursor()
 
         print("Succesfully Connected")
