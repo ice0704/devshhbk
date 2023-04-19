@@ -1,6 +1,7 @@
 import pygame, sys, pygame_gui
 from classes.button import Button
 from chessGame import *
+from difficulty import *
 from queries.getAllsorted import getAllSortedByTurns
 from queries.createUser import *
 
@@ -25,8 +26,9 @@ manager = pygame_gui.UIManager((sizeX, sizeY))
 
 
 
-def mainMenu(sizeX,sizeY, screen):
+def mainMenu(sizeX,sizeY, screen, userName):
     pygame.display.set_caption("Menü")
+
     while True:
         screen.blit(background, (0, 0))
 
@@ -34,6 +36,7 @@ def mainMenu(sizeX,sizeY, screen):
 
         MENU_TEXT = font(100).render("MAIN MENU", True, "#000000")
         MENU_RECT = MENU_TEXT.get_rect(center=(sizeX/2, 60))
+
 
         playChessButton = Button(image=pygame.image.load("resources/test.png"), pos=(sizeX/4, 250), 
                             text_input="SCHACH", font=font(40), base_color="#d7fcd4", hovering_color="Yellow")
@@ -56,7 +59,7 @@ def mainMenu(sizeX,sizeY, screen):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if playChessButton.checkForInput(MENU_MOUSE_POS):
-                    chessGame(sizeX, sizeY, screen)
+                    difficulty(sizeX, sizeY, screen, userName, "chess")
                 if playToeButton.checkForInput(MENU_MOUSE_POS):
                     chessGame()
                 if showRanking.checkForInput(MENU_MOUSE_POS):
@@ -167,6 +170,7 @@ def register(sizeX, sizeY, screen):
             if(event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_object_id == '#main_button_entry'):
                 try:
                     createUserQuery(userName)
+                    text_input.kill()
                     startPage(sizeX, sizeY, screen)
                 except Exception as e:
                     error_msg = str(e) # set error message to the exception string
@@ -233,7 +237,7 @@ def login(sizeX, sizeY, screen):
             if(event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_object_id == '#main_button_entry'):
                 try:
                     checkingExistingUser(userName)
-                    mainMenu(sizeX, sizeY, screen)
+                    mainMenu(sizeX, sizeY, screen, userName)
                 except Exception as e:
                     error_msg = str(e) # set error message to the exception string
                     print(error_msg) # print error message to console

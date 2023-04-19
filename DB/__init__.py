@@ -23,17 +23,17 @@ def createDatabase():
             PRIMARY KEY('Spiele ID')
             );"""
 
+        
         sqlAnweisungBauernschachTabelle = """
             CREATE TABLE 'Bauernschach' (
             'Spiele ID' INTEGER NOT NULL UNIQUE,
-            'User ID' TEXT NOT NULL UNIQUE,
+            'Username' VARCHAR(30),
             'Züge' INTEGER,
             'Schwierigkeitsgrad' INTEGER,
-            'Gewonnen' TEXT,
-            'Verloren' TEXT,
-            PRIMARY KEY('Spiele ID')
+            'Ergebnis' BOOLEAN NOT NULL, 
+            PRIMARY KEY('Spiele ID'),
+            FOREIGN KEY(Username) REFERENCES User(Username)
             );"""
-
         zeiger.execute(sqlAnweisungUserTabelle)
         zeiger.execute(sqlAnweisungTicTacToeTabelle)
         zeiger.execute(sqlAnweisungBauernschachTabelle)

@@ -47,8 +47,7 @@ class Pawn:
         pygame.draw.circle(surface, color, (self.x * 80 + 40, self.y * 80 + 40), radius)
 
 # render the board and pawns
-def reRender():
-
+def reRender(sizeX, sizeY, screen):
     board.fill((255, 206, 158))
     for x in range(0, 6, 2):
         for y in range(0, 6, 2):
@@ -59,14 +58,9 @@ def reRender():
         pawn.draw(board, selected=(pawn == selected_pawn))
 
         # add the board to the screen
-    screen.blit(board, (20, 20))
+    screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))
     pygame.display.flip()
 
-
-# set up the window
-size = (520, 520)
-screen = pygame.display.set_mode(size)
-pygame.display.set_caption("Chess Game")
 
 # set up the pawns
 pawns = []
@@ -91,9 +85,6 @@ print(squares)
 for pawn in pawns:
     pawn.draw(board, selected=False)  # pass selected flag
     # add the board to the screen
-screen.blit(board, (20, 20))
-pygame.display.flip()
-print(squares)
 
 #Minimax Algorithmus mit Alpha-Beta-Pruning
 def minimax(position, depth, alpha, beta, maximizing_player):
@@ -119,12 +110,17 @@ def minimax(position, depth, alpha, beta, maximizing_player):
                 break
         return min_eval
 
-def chessGame():
+def chessGame(sizeX,sizeY,screen, userName, difficulty):
     global selected_pawn, beaten_pawn, pawn_to_beat, last_pos
 
     current_turn = "white"
     run = True
     last_pos = None
+
+    screen.fill("black")
+    global selected_pawn
+    screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))
+    pygame.display.flip()
 
     # the game
     while run is True:
@@ -223,5 +219,4 @@ def chessGame():
                 elif selected_pawn.color == "black" and selected_pawn.y == 5:
                     run = False
                     print("Schwarz hat gewonnen")
-                reRender()
-chessGame()
+                reRender(sizeX, sizeY, screen)

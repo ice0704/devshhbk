@@ -73,7 +73,7 @@ for pawn in pawns:
     pawn.draw(board, selected=False)  
     # add the board to the screen
 
-def chessGame(sizeX,sizeY,screen):
+def chessGame(sizeX,sizeY,screen, userName, difficulty):
     screen.fill("black")
     global selected_pawn
     screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))
