@@ -1,0 +1,548 @@
+Index: Backend/Bauernschach_Spiel.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from math import inf\r\nfrom anytree import Node, RenderTree\r\n\r\nimport pygame\r\nimport sys\r\n\r\nimport pygame_gui\r\n\r\n\r\n\r\npygame.init()\r\n\r\nclass Position:\r\n\r\n    gameover = False\r\n\r\n    def __init__(self, color, x, y):\r\n        self.color = color\r\n        self.x = x\r\n        self.y = y\r\n\r\n    def fillChildren(self):\r\n        return\r\n    def refreshChildren(self):\r\n        return\r\n\r\n\r\nclass Pawn:\r\n\r\n    currentTurn = \"white\"\r\n\r\n    def __init__(self, color, x, y):\r\n        self.color = color\r\n        self.x = x\r\n        self.y = y\r\n        self.has_moved = False  # Variable, welche angibt, ob der Bauer sich bewegt hat\r\n        self.has_beaten = False  # Variable die angibt, ob geschlagen wurde\r\n\r\n    def draw(self, surface, selected=False):\r\n        radius = 30\r\n        if self.color == \"white\":\r\n            if selected:\r\n                color = (0, 255, 0)  # green if selected\r\n            else:\r\n                color = (255, 255, 255)\r\n        else:\r\n            if selected:\r\n                color = (0, 255, 0)  # green if selected\r\n            else:\r\n                color = (0, 0, 0)\r\n        pygame.draw.circle(surface, color, (self.x * 80 + 40, self.y * 80 + 40), radius)\r\n\r\n# render the board and pawns\r\ndef reRender(sizeX, sizeY, screen):\r\n    board.fill((255, 206, 158))\r\n    for x in range(0, 6, 2):\r\n        for y in range(0, 6, 2):\r\n            rect1 = pygame.draw.rect(board, (210, 180, 140), (x * 80, y * 80, 80, 80))\r\n            rect2 = pygame.draw.rect(board, (210, 180, 140), ((x + 1) * 80, (y + 1) * 80, 80, 80))\r\n\r\n    for pawn in pawns:\r\n        pawn.draw(board, selected=(pawn == selected_pawn))\r\n\r\n        # add the board to the screen\r\n    screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))\r\n    pygame.display.flip()\r\n\r\n\r\n# set up the pawns\r\npawns = []\r\nfor i in range(6):\r\n    pawns.append(Pawn(\"black\", i, 0))\r\n    pawns.append(Pawn(\"white\", i, 5))\r\nselected_pawn = None\r\n\r\n# set up the board\r\nsquares = []\r\nboard = pygame.Surface((480, 480))\r\nboard.fill((255, 206, 158))\r\nfor x in range(0, 6, 2):\r\n    for y in range(0, 6, 2):\r\n        rect1 = pygame.draw.rect(board, (210, 180, 140), (x * 80, y * 80, 80, 80))\r\n        rect2 = pygame.draw.rect(board, (210, 180, 140), ((x + 1) * 80, (y + 1) * 80, 80, 80))\r\n        squares.append(rect1)\r\n        squares.append(rect2)\r\n\r\nprint(squares)\r\n\r\nfor pawn in pawns:\r\n    pawn.draw(board, selected=False)  # pass selected flag\r\n    # add the board to the screen\r\n\r\n#Minimax Algorithmus mit Alpha-Beta-Pruning\r\ndef minimax(position, depth, alpha, beta, maximizing_player):\r\n    if depth == 0 or position.gameover:\r\n        return position.evaluation\r\n\r\n    if maximizing_player is True:\r\n        max_eval = float(-inf)\r\n        for child in position:\r\n            eval = minimax(child, depth - 1, alpha, beta, False)\r\n            max_eval = max(max_eval, eval)\r\n            alpha = max(alpha, eval)\r\n            if beta <= alpha:\r\n                break\r\n        return max_eval\r\n    else:\r\n        min_eval = float(inf)\r\n        for child in position:\r\n            eval = minimax(child, depth - 1, alpha, beta, True)\r\n            min_eval = min(min_eval, eval)\r\n            beta = min(beta, eval)\r\n            if beta <= alpha:\r\n                break\r\n        return min_eval\r\n\r\ndef chessGame(sizeX,sizeY,screen, userName, difficulty):\r\n    global selected_pawn, beaten_pawn, pawn_to_beat, last_pos\r\n\r\n    clock = pygame.time.Clock()\r\n    UI_REFRESH_RATE = clock.tick(60)/1000\r\n\r\n    current_turn = \"white\"\r\n    run = True\r\n    last_pos = None\r\n    manager = pygame_gui.UIManager((sizeX, sizeY))\r\n\r\n    screen.fill(\"black\")\r\n    global selected_pawn\r\n    screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))\r\n    pygame.display.flip()\r\n\r\n    helpButton = pygame_gui.elements.UIButton(relative_rect=pygame.Rect(((sizeX/1.2)-20, sizeY/1.12), (sizeX/6, 50)), text = \"BACK\",  manager=manager,\r\n                                            object_id='#helpButton')\r\n\r\n    # the game\r\n    while run is True:\r\n        for event in pygame.event.get():\r\n            if event.type == pygame.QUIT:\r\n                pygame.quit()\r\n                sys.exit()\r\n\r\n            if(event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_object_id == '#helpButton'):\r\n                print(\"hi\")\r\n                \r\n            if event.type == pygame.MOUSEBUTTONDOWN:\r\n                # Speichert die Position des Mouseklicks in der Variable pos\r\n                pos = pygame.mouse.get_pos()\r\n\r\n                # Konvertiert die Positionen in Boardkoordinaten\r\n                x = (pos[0] - (int)((sizeX/2)-(480/2))) // 80\r\n                y = (pos[1] - (int)((sizeY/2)-(480/2))) // 80\r\n\r\n                if selected_pawn is None or (selected_pawn is not None and selected_pawn.color is not current_turn):\r\n                    # Prüft, ob ein Bauer angeklickt wurde\r\n                    for pawn in pawns:\r\n                        if pawn.x == x and pawn.y == y:\r\n                            selected_pawn = pawn\r\n\r\n                            print(pawn)\r\n                            break\r\n\r\n\r\n                    # Prüft, ob ein Bauer angeklickt wurde\r\n                    for pawn in pawns:\r\n                        if pawn.x == x and pawn.y == y:\r\n                            selected_pawn = pawn\r\n\r\n                            print(pawn)\r\n                            break\r\n                    last_pos = pos\r\n            elif event.type == pygame.MOUSEBUTTONUP and selected_pawn is not None and selected_pawn.color is \\\r\n                    current_turn:\r\n                # Speichert die Position des Mouseklicks\r\n                pos = pygame.mouse.get_pos()\r\n\r\n                # Konvertiert die Positionen in Boardkoordinaten\r\n                x = (pos[0] - (int)((sizeX/2)-(480/2))) // 80\r\n                y = (pos[1] - (int)((sizeY/2)-(480/2))) // 80\r\n\r\n                for pawn in pawns:\r\n                    beaten_pawn = False\r\n                    if pawn.x == x and pawn.y == y and pawn.color is not selected_pawn.color:\r\n                        pawn_to_beat = pawn\r\n                        beaten_pawn = True\r\n                        break\r\n\r\n                # Spielfigur bewegen, wenn der Spielzug gültig ist\r\n                if selected_pawn.color == \"white\" and selected_pawn.color == current_turn:\r\n                    if selected_pawn.y == 5 and y == 3 and x == selected_pawn.x and beaten_pawn is False:\r\n                        # Möglichkeit beim ersten Spielzug zwei Felder zu bewegen\r\n                        selected_pawn.x = x\r\n                        selected_pawn.y = y\r\n                        current_turn = \"black\"\r\n                    elif y == selected_pawn.y - 1 and x == selected_pawn.x and beaten_pawn is False:\r\n                        # Ein Spielfeld nach vorne bewegen\r\n                        selected_pawn.x = x\r\n                        selected_pawn.y = y\r\n                        current_turn = \"black\"\r\n                    elif y == selected_pawn.y - 1 and x == selected_pawn.x - 1 and beaten_pawn is True:\r\n                        selected_pawn.x = x\r\n                        selected_pawn.y = y\r\n                        current_turn = \"black\"\r\n                        pawns.remove(pawn_to_beat)\r\n                    elif y == selected_pawn.y - 1 and x == selected_pawn.x + 1 and beaten_pawn is True:\r\n                        selected_pawn.x = x\r\n                        selected_pawn.y = y\r\n                        current_turn = \"black\"\r\n                        pawns.remove(pawn_to_beat)\r\n                elif selected_pawn.color == \"black\" and selected_pawn.color == current_turn:\r\n                    if selected_pawn.y == 0 and y == 2 and x == selected_pawn.x and beaten_pawn is False:\r\n                        # Möglichkeit beim ersten Spielzug zwei Felder zu bewegen\r\n                        selected_pawn.x = x\r\n                        selected_pawn.y = y\r\n                        current_turn = \"white\"\r\n                    elif y == selected_pawn.y + 1 and x == selected_pawn.x and beaten_pawn is False:\r\n                        # Ein Spielfeld nach vorne bewegen\r\n                        selected_pawn.x = x\r\n                        selected_pawn.y = y\r\n                        current_turn = \"white\"\r\n                    elif y == selected_pawn.y + 1 and x == selected_pawn.x - 1 and beaten_pawn is True:\r\n                        selected_pawn.x = x\r\n                        selected_pawn.y = y\r\n                        current_turn = \"white\"\r\n                        pawns.remove(pawn_to_beat)\r\n                    elif y == selected_pawn.y + 1 and x == selected_pawn.x + 1 and beaten_pawn is True:\r\n                        selected_pawn.x = x\r\n                        selected_pawn.y = y\r\n                        current_turn = \"white\"\r\n                        pawns.remove(pawn_to_beat)\r\n                if selected_pawn.color == \"white\" and selected_pawn.y == 0:\r\n                    run = False\r\n                    print(\"Weiß hat gewonnen\")\r\n                elif selected_pawn.color == \"black\" and selected_pawn.y == 5:\r\n                    run = False\r\n                    print(\"Schwarz hat gewonnen\")\r\n                reRender(sizeX, sizeY, screen)\r\n\r\n                manager.process_events(event)\r\n        \r\n            manager.update(UI_REFRESH_RATE)\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Backend/Bauernschach_Spiel.py b/Backend/Bauernschach_Spiel.py
+--- a/Backend/Bauernschach_Spiel.py	(revision f3de4b818073decd2567d7b150ee63f320e9baac)
++++ b/Backend/Bauernschach_Spiel.py	(date 1681915233011)
+@@ -6,23 +6,28 @@
+ 
+ import pygame_gui
+ 
+-
+-
+ pygame.init()
+ 
+-class Position:
++# Setzt die Spielfelder
++boardArray = [["b", "b", "b", "b", "b", "b"],
++         [" ", " ", " ", " ", " ", " "],
++         [" ", " ", " ", " ", " ", " "],
++         [" ", " ", " ", " ", " ", " "],
++         [" ", " ", " ", " ", " ", " "],
++         ["w", "w", "w", "w", "w", "w"]]
+ 
+-    gameover = False
++def searchBoardForBlackRow():
++    y = 5
++    while y >= 0:
++        for x in range(6):
++            if boardArray[y][x] == "b":
++                return y
++        y -= 1
+ 
+-    def __init__(self, color, x, y):
+-        self.color = color
+-        self.x = x
+-        self.y = y
+-
+-    def fillChildren(self):
+-        return
+-    def refreshChildren(self):
+-        return
++def searchBoardForBlackColumn(y):
++    for i in range(5):
++        if boardArray[y][i] == "b":
++            return i
+ 
+ 
+ class Pawn:
+@@ -113,8 +118,61 @@
+             if beta <= alpha:
+                 break
+         return min_eval
++def searchPawn(y, x):
++    # Prüft, ob ein Bauer angeklickt wurde
++    for pawn in pawns:
++        if pawn.x == x and pawn.y == y:
++            return pawn
++
++def getBestMove(x, y, boardArray):
++    if y == 0:
++        if x < 2 or x > 3:
++            if boardArray[y + 2][x] == " ":
++                return [x, y, x, y + 2, 3]
++            if boardArray[y + 1][x] == " ":
++                return [x, y, x, y + 1, 1]
++        if x == 2 or x == 3:
++            if boardArray[y + 2][x] == " ":
++                return [x, y, x, y + 2, 4]
++            if boardArray[y + 1][x] == " ":
++                return [x, y, x, y + 1, 2]
++    if y < 3:
++        if x < 2 or x > 3:
++            if x > 0 and boardArray[y + 1][x - 1] == "w":
++                return [x, y, x - 1, y + 1, 4]
++            if x < 5 and boardArray[y + 1][x + 1] == "w":
++                return [x, y, x + 1, y + 2, 4]
++            if boardArray[y + 1][x] == " ":
++                return [x, y, x, y + 1, 1]
++        if x == 2 or x == 3:
++            if boardArray[y + 1][x + 1] == "w":
++                return [x, y, x + 1, y + 1, 5]
++            if boardArray[y + 1][x - 1] == "w":
++                return [x, y, x - 1, y + 1, 5]
++            if boardArray[y + 1][x] == " ":
++                return [x, y, x, y + 1, 2]
++    if y >= 3:
++        if x < 2 or x > 3:
++            if x > 0 and boardArray[y + 1][x - 1] == "w":
++                return [x, y, x - 1, y + 1, 5]
++            if x < 5 and boardArray[y + 1][x + 1] == "w":
++                return [x, y, x + 1, y + 2, 5]
++            if boardArray[y + 1][x] == " ":
++                return [x, y, x, y + 1, 2]
++        if x == 2 or x == 3:
++            if boardArray[y + 1][x + 1] == "w":
++                return [x, y, x + 1, y + 1, 6]
++            if boardArray[y + 1][x - 1] == "w":
++                return [x, y, x - 1, y + 1, 6]
++            if boardArray[y + 1][x] == " ":
++                return [x, y, x, y + 1, 3]
++    return [0, 0, 0, 0, 0]
++
++
++
+ 
+-def chessGame(sizeX,sizeY,screen, userName, difficulty):
++def chessGame(sizeX, sizeY, screen, userName, difficulty):
++
+     global selected_pawn, beaten_pawn, pawn_to_beat, last_pos
+ 
+     clock = pygame.time.Clock()
+@@ -123,10 +181,13 @@
+     current_turn = "white"
+     run = True
+     last_pos = None
++    zuege = 0
++    gewonnen = False
++
++
+     manager = pygame_gui.UIManager((sizeX, sizeY))
+ 
+     screen.fill("black")
+-    global selected_pawn
+     screen.blit(board, ((sizeX/2)-(480/2), (sizeY/2)-(480/2)))
+     pygame.display.flip()
+ 
+@@ -135,31 +196,23 @@
+ 
+     # the game
+     while run is True:
+-        for event in pygame.event.get():
+-            if event.type == pygame.QUIT:
+-                pygame.quit()
+-                sys.exit()
++        if current_turn == "white":
++            for event in pygame.event.get():
++                if event.type == pygame.QUIT:
++                    pygame.quit()
++                    sys.exit()
+ 
+-            if(event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_object_id == '#helpButton'):
+-                print("hi")
+-                
+-            if event.type == pygame.MOUSEBUTTONDOWN:
+-                # Speichert die Position des Mouseklicks in der Variable pos
+-                pos = pygame.mouse.get_pos()
++                if(event.type == pygame_gui.UI_BUTTON_PRESSED and event.ui_object_id == '#helpButton'):
++                    print("hi")
++
++                if event.type == pygame.MOUSEBUTTONDOWN:
++                    # Speichert die Position des Mouseklicks in der Variable pos
++                    pos = pygame.mouse.get_pos()
+ 
+-                # Konvertiert die Positionen in Boardkoordinaten
+-                x = (pos[0] - (int)((sizeX/2)-(480/2))) // 80
+-                y = (pos[1] - (int)((sizeY/2)-(480/2))) // 80
++                    # Konvertiert die Positionen in Boardkoordinaten
++                    x = (pos[0] - (int)((sizeX/2)-(480/2))) // 80
++                    y = (pos[1] - (int)((sizeY/2)-(480/2))) // 80
+ 
+-                if selected_pawn is None or (selected_pawn is not None and selected_pawn.color is not current_turn):
+-                    # Prüft, ob ein Bauer angeklickt wurde
+-                    for pawn in pawns:
+-                        if pawn.x == x and pawn.y == y:
+-                            selected_pawn = pawn
+-
+-                            print(pawn)
+-                            break
+-
+ 
+                     # Prüft, ob ein Bauer angeklickt wurde
+                     for pawn in pawns:
+@@ -168,74 +221,136 @@
+ 
+                             print(pawn)
+                             break
+-                    last_pos = pos
+-            elif event.type == pygame.MOUSEBUTTONUP and selected_pawn is not None and selected_pawn.color is \
+-                    current_turn:
+-                # Speichert die Position des Mouseklicks
+-                pos = pygame.mouse.get_pos()
++
++                elif event.type == pygame.MOUSEBUTTONUP and selected_pawn is not None and selected_pawn.color is \
++                        current_turn:
++                    # Speichert die Position des Mouseklicks
++                    pos = pygame.mouse.get_pos()
+ 
+-                # Konvertiert die Positionen in Boardkoordinaten
+-                x = (pos[0] - (int)((sizeX/2)-(480/2))) // 80
+-                y = (pos[1] - (int)((sizeY/2)-(480/2))) // 80
++                    # Konvertiert die Positionen in Boardkoordinaten
++                    x = (pos[0] - (int)((sizeX/2)-(480/2))) // 80
++                    y = (pos[1] - (int)((sizeY/2)-(480/2))) // 80
+ 
+-                for pawn in pawns:
+-                    beaten_pawn = False
+-                    if pawn.x == x and pawn.y == y and pawn.color is not selected_pawn.color:
+-                        pawn_to_beat = pawn
+-                        beaten_pawn = True
+-                        break
++                    for pawn in pawns:
++                        beaten_pawn = False
++                        if pawn.x == x and pawn.y == y and pawn.color is not selected_pawn.color:
++                            pawn_to_beat = pawn
++                            beaten_pawn = True
++                            break
+ 
+-                # Spielfigur bewegen, wenn der Spielzug gültig ist
+-                if selected_pawn.color == "white" and selected_pawn.color == current_turn:
+-                    if selected_pawn.y == 5 and y == 3 and x == selected_pawn.x and beaten_pawn is False:
+-                        # Möglichkeit beim ersten Spielzug zwei Felder zu bewegen
+-                        selected_pawn.x = x
+-                        selected_pawn.y = y
+-                        current_turn = "black"
+-                    elif y == selected_pawn.y - 1 and x == selected_pawn.x and beaten_pawn is False:
+-                        # Ein Spielfeld nach vorne bewegen
+-                        selected_pawn.x = x
+-                        selected_pawn.y = y
+-                        current_turn = "black"
+-                    elif y == selected_pawn.y - 1 and x == selected_pawn.x - 1 and beaten_pawn is True:
+-                        selected_pawn.x = x
+-                        selected_pawn.y = y
+-                        current_turn = "black"
+-                        pawns.remove(pawn_to_beat)
+-                    elif y == selected_pawn.y - 1 and x == selected_pawn.x + 1 and beaten_pawn is True:
+-                        selected_pawn.x = x
+-                        selected_pawn.y = y
+-                        current_turn = "black"
+-                        pawns.remove(pawn_to_beat)
+-                elif selected_pawn.color == "black" and selected_pawn.color == current_turn:
+-                    if selected_pawn.y == 0 and y == 2 and x == selected_pawn.x and beaten_pawn is False:
+-                        # Möglichkeit beim ersten Spielzug zwei Felder zu bewegen
+-                        selected_pawn.x = x
+-                        selected_pawn.y = y
+-                        current_turn = "white"
+-                    elif y == selected_pawn.y + 1 and x == selected_pawn.x and beaten_pawn is False:
+-                        # Ein Spielfeld nach vorne bewegen
+-                        selected_pawn.x = x
+-                        selected_pawn.y = y
+-                        current_turn = "white"
+-                    elif y == selected_pawn.y + 1 and x == selected_pawn.x - 1 and beaten_pawn is True:
+-                        selected_pawn.x = x
+-                        selected_pawn.y = y
+-                        current_turn = "white"
+-                        pawns.remove(pawn_to_beat)
+-                    elif y == selected_pawn.y + 1 and x == selected_pawn.x + 1 and beaten_pawn is True:
+-                        selected_pawn.x = x
+-                        selected_pawn.y = y
+-                        current_turn = "white"
+-                        pawns.remove(pawn_to_beat)
+-                if selected_pawn.color == "white" and selected_pawn.y == 0:
+-                    run = False
+-                    print("Weiß hat gewonnen")
+-                elif selected_pawn.color == "black" and selected_pawn.y == 5:
+-                    run = False
+-                    print("Schwarz hat gewonnen")
+-                reRender(sizeX, sizeY, screen)
++                    # Spielfigur bewegen, wenn der Spielzug gültig ist
++                    if selected_pawn.color == "white" and selected_pawn.color == current_turn:
++                        if selected_pawn.y == 5 and y == 3 and x == selected_pawn.x and beaten_pawn is False:
++                            # Möglichkeit beim ersten Spielzug zwei Felder zu bewegen
++                            print(selected_pawn.x)
++                            print(selected_pawn.y)
++                            boardArray[selected_pawn.y][selected_pawn.x] = " "
++                            boardArray[y][x] = "w"
++                            selected_pawn.x = x
++                            selected_pawn.y = y
++                            current_turn = "black"
++                            zuege += 1
++                        elif y == selected_pawn.y - 1 and x == selected_pawn.x and beaten_pawn is False:
++                            # Ein Spielfeld nach vorne bewegen
++                            boardArray[selected_pawn.y][selected_pawn.x] = "w"
++                            boardArray[y][x] = " "
++                            selected_pawn.x = x
++                            selected_pawn.y = y
++                            current_turn = "black"
++                            zuege += 1
++                        elif y == selected_pawn.y - 1 and x == selected_pawn.x - 1 and beaten_pawn is True:
++                            boardArray[selected_pawn.y][selected_pawn.x] = " "
++                            boardArray[y][x] = "w"
++                            selected_pawn.x = x
++                            selected_pawn.y = y
++                            current_turn = "black"
++                            pawns.remove(pawn_to_beat)
++                            zuege += 1
++                        elif y == selected_pawn.y - 1 and x == selected_pawn.x + 1 and beaten_pawn is True:
++                            boardArray[selected_pawn.y][selected_pawn.x] = " "
++                            boardArray[y][x] = "w"
++                            selected_pawn.x = x
++                            selected_pawn.y = y
++                            current_turn = "black"
++                            pawns.remove(pawn_to_beat)
++                            zuege += 1
++                    if selected_pawn.color == "white" and selected_pawn.y == 0:
++                        gewonnen = True
++                        print("Weiß hat gewonnen")
++
++                    reRender(sizeX, sizeY, screen)
+ 
+-                manager.process_events(event)
+-        
+-            manager.update(UI_REFRESH_RATE)
++                    manager.process_events(event)
++                manager.update(UI_REFRESH_RATE)
++        elif current_turn == "black":
++            board_copy = boardArray
++            best_move = [0, 0, 0, 0, 0]
++
++            x = 0
++
++            while x < 6:
++                y = 0
++                while y < 6:
++                    if board_copy[y][x] == "b":
++                        current_move = getBestMove(x, y, board_copy)
++                        if best_move[4] <= current_move[4]:
++                            best_move = current_move
++                    y += 1
++                x += 1
++
++            x_move = best_move[0]
++            y_move = best_move[1]
++
++            x_destination = best_move[2]
++            y_destination = best_move[3]
++
++            print(f"Bester Zug: Von {x_move}, "
++                  f"{y_move} nach {x_destination}, {y_destination} mit der Value {best_move[4]}")
++
++            for pawn in pawns:
++                if pawn.x == x_move and pawn.y == y_move:
++                    selected_pawn = pawn
++                    break
++
++            for pawn in pawns:
++                beaten_pawn = False
++                if pawn.x == x_destination and pawn.y == y_destination and pawn.color is not selected_pawn.color:
++                    pawn_to_beat = pawn
++                    beaten_pawn = True
++                    break
++
++            if selected_pawn.color == "black" and selected_pawn.color == current_turn:
++                if selected_pawn.y == 0 and y_destination == 2 and x_destination == selected_pawn.x and \
++                        beaten_pawn is False:
++                    # Möglichkeit beim ersten Spielzug zwei Felder zu bewegen
++                    boardArray[selected_pawn.y][selected_pawn.x] = " "
++                    boardArray[y_destination][x_destination] = "b"
++                    selected_pawn.x = x_destination
++                    selected_pawn.y = y_destination
++                elif y_destination == selected_pawn.y + 1 and x_destination == selected_pawn.x and beaten_pawn is False:
++                    # Ein Spielfeld nach vorne bewegen
++                    boardArray[selected_pawn.y][selected_pawn.x] = " "
++                    boardArray[y_destination][x_destination] = "b"
++                    selected_pawn.x = x_destination
++                    selected_pawn.y = y_destination
++                elif y_destination == selected_pawn.y - 1 and x_destination == selected_pawn.x - 1 and \
++                        beaten_pawn is True:
++                    boardArray[selected_pawn.y][selected_pawn.x] = " "
++                    boardArray[y_destination][x_destination] = "b"
++                    selected_pawn.x = x_destination
++                    selected_pawn.y = y_destination
++                    pawns.remove(pawn_to_beat)
++                elif y_destination == selected_pawn.y - 1 and x_destination == selected_pawn.x + 1 and \
++                        beaten_pawn is True:
++                    boardArray[selected_pawn.y][selected_pawn.x] = " "
++                    boardArray[y_destination][x_destination] = "b"
++                    selected_pawn.x = x_destination
++                    selected_pawn.y = y_destination
++                    pawns.remove(pawn_to_beat)
++            if selected_pawn.color == "black" and selected_pawn.y == 0:
++                gewonnen = True
++                print("Schwarz hat gewonnen")
++
++            current_turn = "white"
++            print(boardArray)
++            reRender(sizeX, sizeY, screen)
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"f2baf0e4-a2ae-4c29-8316-e85e5ad6a870\" name=\"Changes\" comment=\"Login Seite\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Python Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"master\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"2NSWYP72UQRzYksz8mSWK3a8qip\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/recin/Documents/GitHub/devshhbk&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\recin\\Documents\\GitHub\\devshhbk\\Backend\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Python.main\">\r\n    <configuration name=\"Tic_Tac_Toe_Spiel\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"devshhbk\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/Backend\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/Backend/Tic_Tac_Toe_Spiel.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"__init__\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"devshhbk\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$/DB\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/DB/__init__.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" nameIsGenerated=\"true\">\r\n      <module name=\"devshhbk\" />\r\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\r\n      <option name=\"PARENT_ENVS\" value=\"true\" />\r\n      <envs>\r\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\r\n      </envs>\r\n      <option name=\"SDK_HOME\" value=\"\" />\r\n      <option name=\"WORKING_DIRECTORY\" value=\"$PROJECT_DIR$\" />\r\n      <option name=\"IS_MODULE_SDK\" value=\"true\" />\r\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\r\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\r\n      <option name=\"SCRIPT_NAME\" value=\"$PROJECT_DIR$/main.py\" />\r\n      <option name=\"PARAMETERS\" value=\"\" />\r\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\r\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\r\n      <option name=\"MODULE_MODE\" value=\"false\" />\r\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\r\n      <option name=\"INPUT_FILE\" value=\"\" />\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Python.__init__\" />\r\n        <item itemvalue=\"Python.Tic_Tac_Toe_Spiel\" />\r\n        <item itemvalue=\"Python.Tic_Tac_Toe_Spiel\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"f2baf0e4-a2ae-4c29-8316-e85e5ad6a870\" name=\"Changes\" comment=\"\" />\r\n      <created>1679658011105</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1679658011105</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"keine ahnung\">\r\n      <created>1680169680304</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1680169680304</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"verschiebung code bauernschach\">\r\n      <created>1680169719176</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1680169719176</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Login Seite\">\r\n      <created>1681813905753</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1681813905753</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"Login Seite\">\r\n      <created>1681815599165</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1681815599165</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"5\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"keine ahnung\" />\r\n    <MESSAGE value=\"verschiebung code bauernschach\" />\r\n    <MESSAGE value=\"Login Seite\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Login Seite\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision f3de4b818073decd2567d7b150ee63f320e9baac)
++++ b/.idea/workspace.xml	(date 1681914972990)
+@@ -1,8 +1,11 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ChangeListManager">
+-    <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="Login Seite">
++    <list default="true" id="f2baf0e4-a2ae-4c29-8316-e85e5ad6a870" name="Changes" comment="unversioned">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/Backend/Bauernschach_Spiel.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/Bauernschach_Spiel.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/Backend/Tictactow_Algorytmus.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/Tictactow_Algorytmus.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/DB/StrategiespieleDB.db" beforeDir="false" afterPath="$PROJECT_DIR$/DB/StrategiespieleDB.db" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -19,7 +22,7 @@
+   <component name="Git.Settings">
+     <option name="RECENT_BRANCH_BY_REPOSITORY">
+       <map>
+-        <entry key="$PROJECT_DIR$" value="master" />
++        <entry key="$PROJECT_DIR$" value="dv" />
+       </map>
+     </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+@@ -45,7 +48,49 @@
+       <recent name="C:\Users\recin\Documents\GitHub\devshhbk\Backend" />
+     </key>
+   </component>
+-  <component name="RunManager" selected="Python.main">
++  <component name="RunManager" selected="Python.Bauernschach_Spiel">
++    <configuration name="Bauernschach_Spiel" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++      <module name="devshhbk" />
++      <option name="INTERPRETER_OPTIONS" value="" />
++      <option name="PARENT_ENVS" value="true" />
++      <envs>
++        <env name="PYTHONUNBUFFERED" value="1" />
++      </envs>
++      <option name="SDK_HOME" value="" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Backend" />
++      <option name="IS_MODULE_SDK" value="true" />
++      <option name="ADD_CONTENT_ROOTS" value="true" />
++      <option name="ADD_SOURCE_ROOTS" value="true" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Backend/Bauernschach_Spiel.py" />
++      <option name="PARAMETERS" value="" />
++      <option name="SHOW_COMMAND_LINE" value="false" />
++      <option name="EMULATE_TERMINAL" value="false" />
++      <option name="MODULE_MODE" value="false" />
++      <option name="REDIRECT_INPUT" value="false" />
++      <option name="INPUT_FILE" value="" />
++      <method v="2" />
++    </configuration>
++    <configuration name="Game" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++      <module name="devshhbk" />
++      <option name="INTERPRETER_OPTIONS" value="" />
++      <option name="PARENT_ENVS" value="true" />
++      <envs>
++        <env name="PYTHONUNBUFFERED" value="1" />
++      </envs>
++      <option name="SDK_HOME" value="" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Backend" />
++      <option name="IS_MODULE_SDK" value="true" />
++      <option name="ADD_CONTENT_ROOTS" value="true" />
++      <option name="ADD_SOURCE_ROOTS" value="true" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Backend/Game.py" />
++      <option name="PARAMETERS" value="" />
++      <option name="SHOW_COMMAND_LINE" value="false" />
++      <option name="EMULATE_TERMINAL" value="false" />
++      <option name="MODULE_MODE" value="false" />
++      <option name="REDIRECT_INPUT" value="false" />
++      <option name="INPUT_FILE" value="" />
++      <method v="2" />
++    </configuration>
+     <configuration name="Tic_Tac_Toe_Spiel" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+       <module name="devshhbk" />
+       <option name="INTERPRETER_OPTIONS" value="" />
+@@ -111,12 +156,15 @@
+     </configuration>
+     <recent_temporary>
+       <list>
++        <item itemvalue="Python.Bauernschach_Spiel" />
++        <item itemvalue="Python.Game" />
+         <item itemvalue="Python.__init__" />
+         <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
+         <item itemvalue="Python.Tic_Tac_Toe_Spiel" />
+       </list>
+     </recent_temporary>
+   </component>
++  <component name="ShelveChangesManager" show_recycled="true" />
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="TaskManager">
+     <task active="true" id="Default" summary="Default task">
+@@ -154,7 +202,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1681815599165</updated>
+     </task>
+-    <option name="localTasksCounter" value="5" />
++    <task id="LOCAL-00005" summary="unversioned">
++      <created>1681899775702</created>
++      <option name="number" value="00005" />
++      <option name="presentableId" value="LOCAL-00005" />
++      <option name="project" value="LOCAL" />
++      <updated>1681899775702</updated>
++    </task>
++    <option name="localTasksCounter" value="6" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -172,6 +227,30 @@
+     <MESSAGE value="keine ahnung" />
+     <MESSAGE value="verschiebung code bauernschach" />
+     <MESSAGE value="Login Seite" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Login Seite" />
++    <MESSAGE value="unversioned" />
++    <option name="LAST_COMMIT_MESSAGE" value="unversioned" />
++  </component>
++  <component name="XDebuggerManager">
++    <breakpoint-manager>
++      <breakpoints>
++        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
++          <url>file://$PROJECT_DIR$/Backend/difficulty.py</url>
++          <line>45</line>
++          <option name="timeStamp" value="13" />
++        </line-breakpoint>
++        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
++          <url>file://$PROJECT_DIR$/Backend/Bauernschach_Spiel.py</url>
++          <line>294</line>
++          <option name="timeStamp" value="14" />
++        </line-breakpoint>
++      </breakpoints>
++      <default-breakpoints>
++        <breakpoint type="python-exception">
++          <properties notifyOnTerminate="true" exception="BaseException">
++            <option name="notifyOnTerminate" value="true" />
++          </properties>
++        </breakpoint>
++      </default-breakpoints>
++    </breakpoint-manager>
+   </component>
+ </project>
+\ No newline at end of file
+Index: Backend/Tictactow_Algorytmus.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\r\ndef checkwinloosdraw(board):\r\n    for i in range(6):\r\n        for q in range(2):\r\n            if board[i][0 + q] == board[i][1 + q] == board[i][2 + q] == board[i][3 + q] != \" \"\r\n                return board[i][0 + q]\r\n\r\n            if board[0 + q][i] == board[1 + q][i] == board[2 + q][i] == board[3 + q][i] != \" \":\r\n                return board[0 + q][i]\r\n\r\n    oliure = (0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)\r\n    for pos in oliure:\r\n        if board[pos[0]][pos[1]] == board[pos[0] + 1][pos[1] + 1] == board[pos[0] + 2][pos[1] + 2] == board[pos[0] + 3][pos[1] + 3] != \" \":\r\n            return board[pos[0]][pos[1]]\r\n\r\n    oreuli = (0, 3), (1, 3), (2, 3), (0, 4), (1, 4), (2, 4), (0, 5), (1, 5), (2, 5)\r\n    for pos in oreuli:\r\n        if board[pos[0]][pos[1]] == board[pos[0] + 1][pos[1] - 1] == board[pos[0] + 2][pos[1] - 2] == board[pos[0] + 3][pos[1] - 3] != \" \":\r\n            return board[pos[0]][pos[1]]\r\n\r\n\r\n\r\ndef Algorithmus(board):\r\n    optimalesfeld = minimax(board,5)\r\n    XXX = ((optimalesfeld[0] -1)*100)+50\r\n    YYY = ((optimalesfeld[1] -1)*100)+50\r\n    return [XXX,YYY]\r\n\r\n\r\n\r\ndef minimax(board,tiefe):\r\n\r\n    wertung = [[\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"],\r\n               [\" \", \" \", \" \", \" \", \" \", \" \"]]\r\n\r\n    aktuelletiefe = 0\r\n    for i in range(6):\r\n        for u in range(6):\r\n            boardcopy = board\r\n            print(boardcopy)\r\n            if boardcopy[i][u] == \" \":\r\n\r\n                boardcopy[i][u] = \"O\"\r\n\r\n                #wenn die KI Gewinnt dann ist die wertung 1\r\n                if checkwinloosdraw(boardcopy) == \"O\":\r\n                    wertung[i][u] = 1\r\n                #wenn die Spieler Gewinnt ist die Wertung -1\r\n                if checkwinloosdraw(boardcopy) == \"X\":\r\n                    wertung[i][u] = -1\r\n                # wenn niemand gewonnen hat ist wird erneut der min max ausgeführt wenn die tiefe noch nicht erreicht ist\r\n                if checkwinloosdraw(boardcopy) != \"X\" and checkwinloosdraw(boardcopy) != \"O\":\r\n                    if tiefe != aktuelletiefe:\r\n                        wertung[i][u] = minimax(boardcopy,tiefe)\r\n                    aktuelletiefe = aktuelletiefe + 1\r\n\r\n    return [0,0]\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Backend/Tictactow_Algorytmus.py b/Backend/Tictactow_Algorytmus.py
+--- a/Backend/Tictactow_Algorytmus.py	(revision f3de4b818073decd2567d7b150ee63f320e9baac)
++++ b/Backend/Tictactow_Algorytmus.py	(date 1681904023125)
+@@ -2,7 +2,7 @@
+ def checkwinloosdraw(board):
+     for i in range(6):
+         for q in range(2):
+-            if board[i][0 + q] == board[i][1 + q] == board[i][2 + q] == board[i][3 + q] != " "
++            if board[i][0 + q] == board[i][1 + q] == board[i][2 + q] == board[i][3 + q] != " ":
+                 return board[i][0 + q]
+ 
+             if board[0 + q][i] == board[1 + q][i] == board[2 + q][i] == board[3 + q][i] != " ":
